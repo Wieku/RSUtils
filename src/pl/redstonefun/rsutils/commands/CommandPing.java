@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
 
-@RSCommand(command="ping", description="Pong!", aliases = { "" })
+@RSCommand(command="ping", description="Pong!")
 public class CommandPing implements Command {
 
 	@Override

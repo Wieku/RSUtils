@@ -1,6 +1,5 @@
 package pl.redstonefun.rsutils.main;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -26,18 +25,19 @@ public class Main extends JavaPlugin {
 		instance = this;
 		logger = getLogger();
 		PluginManager manager = getServer().getPluginManager();
-		Discoverer discoverer = new ClasspathDiscoverer();
+		
+		
+		// Dynamiczne ³adowanie komend
 		try {
+			Discoverer discoverer = new ClasspathDiscoverer();
 			discoverer.addAnnotationListener(new CommandsGetter());
 			discoverer.discover(true, true, true, true, true);
-			for(URL c : discoverer.findResources()){
-				logger.info(c.getFile());
-			}
 		} catch (Exception e) {
-			logger.severe("Problem z zaladowaniem komend! Wylaczam plugin!");	
+			logger.severe("Problem z zaladowaniem komend! Wylaczam plugin!");
 			e.printStackTrace();
 			manager.disablePlugin(this);
 		}
+		//Koniec
 		
 		logger.info("Plugin zostal zaladowany!");
 	}
@@ -48,7 +48,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		commandsList.get(command).exec(sender, command.getName(), args);
+		commandsList.get(command.getName()).exec(sender, command.getName(), args);
 		return true;
 	};
 }

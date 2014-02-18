@@ -24,6 +24,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.bukkit.Bukkit;
+
+import pl.redstonefun.rsutils.main.Main;
+
 /**
  * The Class ClasspathReader.
  *
@@ -66,7 +70,7 @@ public class ClasspathDiscoverer extends Discoverer {
     }
 
     //-------------------------------------------------------------------------
-
+    //TODO Modified by LudziE12
     // See http://code.google.com/p/reflections/source/browse/trunk/reflections/src/main/java/org/reflections/util/ClasspathHelper.java?r=103
     private URL[] getUrlsForCurrentClasspath() {
         List<URL> list = new ArrayList<URL>();
@@ -75,11 +79,13 @@ public class ClasspathDiscoverer extends Discoverer {
         while (loader != null) {
             if (loader instanceof URLClassLoader) {
                 URL[]     urlArray = ((URLClassLoader) loader).getURLs();
+               
                 List<URL> urlList  = Arrays.asList(urlArray);
                 list.addAll(urlList);
             }
             loader = loader.getParent();
         }
+        list.add(Bukkit.getPluginManager().getPlugin(Main.instance.getName()).getClass().getProtectionDomain().getCodeSource().getLocation());
         return list.toArray(new URL[list.size()]);
     }
 
