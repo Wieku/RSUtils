@@ -8,8 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RSCommand {
-	
 	String command();
 	String description() default "";
-	String[] aliases();
+	String[] aliases() default {};
 }

@@ -1,11 +1,12 @@
 package pl.redstonefun.rsutils.commands;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.SimplePluginManager;
 
 import pl.redstonefun.rsutils.api.Command;
@@ -15,41 +16,51 @@ import pl.redstonefun.rsutils.main.Main;
 import com.impetus.annovention.listener.ClassAnnotationDiscoveryListener;
 
 public class CommandsGetter implements ClassAnnotationDiscoveryListener {
-
-	CommandMap commandMap;
-	
-	public CommandsGetter() throws Exception{
-		Field field = SimplePluginManager.class.getDeclaredField("commandMap");
-        field.setAccessible(true);
-        commandMap = (CommandMap)(field.get(Main.instance.getServer().getPluginManager()));
-	}
 	
 	@Override
 	public String[] supportedAnnotations() {
-		Main.logger.info("Annot");
 		return new String[]{RSCommand.class.getName()};
 	}
 
 	@Override
 	public void discovered(String clazz, String annotation) {
-		Main.logger.info("Znaleziono " + clazz);
 		try {
 			Class<?> maybe = Class.forName(clazz);
 			if(Arrays.asList(maybe.getInterfaces()).contains(Command.class)){
 				RSCommand desc = (RSCommand) maybe.getAnnotation(RSCommand.class);
-			String command = desc.command();
-			String description = desc.description();
-			String[] aliases = desc.aliases();
-			PluginCommand comm = Main.instance.getCommand(command);
-			comm.setAliases(Arrays.asList(aliases));
-			comm.setDescription(description);
-			Main.instance.commandsList.put(command, (Command)maybe.newInstance());
+
+				PluginCommand command = getCommand(desc.command(), Main.instance);
+				
+				String[] aliases = desc.aliases();
+				if(aliases != null){
+					command.setAliases(Arrays.asList(aliases));	
+				}
+				
+				command.setDescription(desc.description());
+				
+				getMap().register(Main.instance.getDescription().getName(), command);
+				
+				Main.instance.commandsList.put(desc.command(), (Command)maybe.newInstance());
+			} else {
+				Main.logger.severe("Nieprawid³owa sk³adnia klasy: " + maybe.getName());
 			}
 		} catch (Exception e) {
+			Main.logger.severe("Problem z wczytaniem komendy!");
 			e.printStackTrace();
 		}
-		
-
 	}
-
+	
+	public PluginCommand getCommand(String name, Plugin plugin) throws Exception{
+			Constructor<PluginCommand> c = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+			c.setAccessible(true);
+			return c.newInstance(name, plugin);
+	}
+	
+	public CommandMap getMap() throws Exception{
+		Field field = SimplePluginManager.class.getDeclaredField("commandMap");
+        field.setAccessible(true);
+        return (CommandMap)(field.get(Main.instance.getServer().getPluginManager()));
+	}
+	
+	
 }
