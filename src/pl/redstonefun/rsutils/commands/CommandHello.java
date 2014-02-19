@@ -1,19 +1,18 @@
 package pl.redstonefun.rsutils.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
 
-@RSCommand(command = "clearinventory", description="Czyœci ekwipunek", aliases = {"ci"})
-public class CommandClearInventory implements Command{
+@RSCommand(command="hello",description="Siemka",aliases={"he"})
+public class CommandHello implements Command {
 
 	@Override
 	public void exec(CommandSender sender, String command, String[] args) {
-		if(sender instanceof Player){
-			((Player)sender).getInventory().clear();
-		}
+		sender.sendMessage(ChatColor.GREEN + "Czeœæ!");
+
 	}
-	
+
 }
