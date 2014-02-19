@@ -9,6 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import pl.redstonefun.rsutils.commands.Commands;
+import pl.redstonefun.rsutils.listeners.PlayerJumpPadListener;
 
 public class Main extends JavaPlugin {
 	
@@ -32,6 +33,8 @@ public class Main extends JavaPlugin {
 			manager.disablePlugin(this);
 		}
 		//Koniec
+		
+		manager.registerEvents(new PlayerJumpPadListener(), this);
 		
 		logger.info("Plugin zostal zaladowany!");
 	}
