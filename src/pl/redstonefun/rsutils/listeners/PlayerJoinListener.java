@@ -7,11 +7,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import pl.redstonefun.rsutils.api.RSListener;
 import pl.redstonefun.rsutils.calendar.CalendarEx;
 import pl.redstonefun.rsutils.message.Messages;
 import pl.redstonefun.rsutils.yaml.YAML;
 import pl.redstonefun.rsutils.yaml.YAML.type;
 
+@RSListener
 public class PlayerJoinListener implements Listener {
 
 	@EventHandler

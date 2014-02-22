@@ -5,6 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import pl.redstonefun.rsutils.api.RSListener;
+
+@RSListener
 public class PlayerLessListener implements Listener {
 	
 	@EventHandler

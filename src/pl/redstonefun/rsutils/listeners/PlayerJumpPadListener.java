@@ -7,8 +7,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import pl.redstonefun.rsutils.api.RSListener;
 import pl.redstonefun.rsutils.user.User;
 
+@RSListener
 public class PlayerJumpPadListener implements Listener {
 
 	@EventHandler

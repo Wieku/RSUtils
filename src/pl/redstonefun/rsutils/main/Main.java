@@ -10,9 +10,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import pl.redstonefun.rsutils.commands.Commands;
-import pl.redstonefun.rsutils.listeners.PlayerJoinListener;
-import pl.redstonefun.rsutils.listeners.PlayerJumpPadListener;
-import pl.redstonefun.rsutils.listeners.PlayerLessListener;
+import pl.redstonefun.rsutils.listeners.Listeners;
 import pl.redstonefun.rsutils.yaml.YAML;
 
 public class Main extends JavaPlugin {
@@ -21,29 +19,28 @@ public class Main extends JavaPlugin {
 	public HashMap<String, pl.redstonefun.rsutils.api.Command> commandsList = new HashMap<String, pl.redstonefun.rsutils.api.Command>();
 	public static Main instance;
 	public static String pluginFolder;
+	public PluginManager manager;
 	
 	@Override
 	public void onEnable() {
 		pluginFolder = getDataFolder().getAbsolutePath() + File.separator;
 		instance = this;
 		logger = getLogger();
-		PluginManager manager = getServer().getPluginManager();
+		
+		manager = getServer().getPluginManager();
+		
 		YAML.loadConfigs();
 		// Dynamiczne ³adowanie komend
 		try {
 			Commands commands = new Commands();
 			commands.registerCommands();
+			new Listeners().register();
 		} catch (Exception e) {
-			logger.severe("Problem z zaladowaniem komend! Wylaczam plugin!");
+			logger.severe("Problem z zaladowaniem komend/listenerów! Wylaczam plugin!");
 			e.printStackTrace();
 			manager.disablePlugin(this);
 		}
 		//Koniec
-		
-		manager.registerEvents(new PlayerJumpPadListener(), this);
-		manager.registerEvents(new PlayerJoinListener(), this);
-		manager.registerEvents(new PlayerLessListener(), this);
-		
 		logger.info("Plugin zostal zaladowany!");
 	}
 	
