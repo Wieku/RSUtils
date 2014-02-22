@@ -1,5 +1,6 @@
 package pl.redstonefun.rsutils.main;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -9,20 +10,25 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import pl.redstonefun.rsutils.commands.Commands;
+import pl.redstonefun.rsutils.listeners.PlayerJoinListener;
 import pl.redstonefun.rsutils.listeners.PlayerJumpPadListener;
+import pl.redstonefun.rsutils.listeners.PlayerLessListener;
+import pl.redstonefun.rsutils.yaml.YAML;
 
 public class Main extends JavaPlugin {
 	
 	public static Logger logger;
 	public HashMap<String, pl.redstonefun.rsutils.api.Command> commandsList = new HashMap<String, pl.redstonefun.rsutils.api.Command>();
 	public static Main instance;
+	public static String pluginFolder;
 	
 	@Override
 	public void onEnable() {
+		pluginFolder = getDataFolder().getAbsolutePath() + File.separator;
 		instance = this;
 		logger = getLogger();
 		PluginManager manager = getServer().getPluginManager();
-		
+		YAML.loadConfigs();
 		// Dynamiczne ³adowanie komend
 		try {
 			Commands commands = new Commands();
@@ -35,6 +41,8 @@ public class Main extends JavaPlugin {
 		//Koniec
 		
 		manager.registerEvents(new PlayerJumpPadListener(), this);
+		manager.registerEvents(new PlayerJoinListener(), this);
+		manager.registerEvents(new PlayerLessListener(), this);
 		
 		logger.info("Plugin zostal zaladowany!");
 	}

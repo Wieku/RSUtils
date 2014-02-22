@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import pl.redstonefun.rsutils.message.Messages;
 import ru.tehkode.permissions.PermissionUser;
@@ -48,6 +49,18 @@ public class User {
 		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 200);
 		location.getWorld().playSound(location, Sound.GHAST_FIREBALL, 1.0F, 1.0F);
 		player.setVelocity(location.getDirection().setY(height).multiply(speed));
+	}
+	
+	public ItemStack getItemInHand(){
+		return player.getItemInHand();
+	}
+	
+	public void setItemInHand(ItemStack stack){
+		player.setItemInHand(stack);
+	}
+	
+	public void setHat(ItemStack itemstack){
+		
 	}
 	
 	public void sendMessage(String message){

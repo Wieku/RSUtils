@@ -72,7 +72,7 @@ public class Commands {
 			getCommandMap().register(Main.instance.getDescription().getName(), command);
 					
 			commands.put(annotation.command(), (Command)classe.newInstance());
-			Main.logger.info("Zaladowano komende: " + command);
+			Main.logger.info("Zaladowano komende: " + annotation.command());
 		}
 		
 	}

@@ -1,0 +1,94 @@
+package pl.redstonefun.rsutils.yaml;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import pl.redstonefun.rsutils.main.Main;
+
+public class YAML {
+	
+	public enum type{
+		WARPS,
+		PWARPS,
+		HOMES,
+		CONFIG,
+		BANS;
+	}
+	
+	private static HashMap<type, YamlConfiguration> configs = new HashMap<type, YamlConfiguration>();
+	
+	public static void loadConfigs(){
+		for(type t : type.values()){
+			loadConf(t);
+		}
+	}
+	
+	public static void reloadConfigs(){
+		configs.clear();
+		loadConfigs();
+	}
+	
+	public static void reloadConfig(type type){
+		configs.remove(type);
+		loadConf(type);
+	}
+	
+	public static void saveAll() throws Exception{
+		for(type t : configs.keySet()){
+			save(t);
+		}
+	}
+	
+	public static void save(type type) throws Exception{
+		File file = new File(Main.pluginFolder + type.toString().toLowerCase() + ".yml");
+		configs.get(type).save(file);
+	}
+	
+	public static void saveAndReload(type type) throws Exception{
+		save(type);
+		loadConf(type);
+	}
+	
+	public static void saveAndReloadAll() throws Exception{
+		saveAll();
+		reloadConfigs();
+	}
+	
+	protected static void loadConf(type t){
+		File file = new File(Main.pluginFolder + t.toString().toLowerCase() + ".yml");
+		if(!file.exists()){
+			if(t != type.CONFIG){
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Main.instance.saveDefaultConfig();
+			}
+		}
+		configs.put(t, YamlConfiguration.loadConfiguration(file));
+		Main.logger.info("Zaladowano plik yaml: " + t.toString().toLowerCase());
+	}
+	
+	public static String getString(type t, String path){
+		return configs.get(t).getString(path);
+	}
+	
+	public static double getDouble(type t, String path){
+		return configs.get(t).getDouble(path);
+	}
+	
+	public static float getFloat(type t, String path){
+		return (float)configs.get(t).getDouble(path);
+	}
+	
+	public static void set(type t, String path, Object value){
+		YamlConfiguration con = configs.get(t);
+		con.set(path, value);
+		configs.put(t, con);
+	}
+}
