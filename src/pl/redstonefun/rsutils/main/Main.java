@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +15,7 @@ import com.comphenix.protocol.ProtocolManager;
 import pl.redstonefun.rsutils.commands.Commands;
 import pl.redstonefun.rsutils.listeners.Listeners;
 import pl.redstonefun.rsutils.listeners.PlayerSignEditingListener;
+import pl.redstonefun.rsutils.user.User;
 import pl.redstonefun.rsutils.yaml.YAML;
 
 public class Main extends JavaPlugin {
@@ -48,6 +50,10 @@ public class Main extends JavaPlugin {
 		
 		manager.registerEvents(sl, this);
 		pManager.addPacketListener(sl);
+		
+		for(Player player : getServer().getOnlinePlayers()){
+			new User(player).updateListName();
+		}
 		
 		logger.info("Plugin zostal zaladowany!");
 	}

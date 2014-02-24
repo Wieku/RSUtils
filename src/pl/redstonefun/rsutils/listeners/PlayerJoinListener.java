@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import pl.redstonefun.rsutils.api.RSListener;
 import pl.redstonefun.rsutils.calendar.CalendarEx;
 import pl.redstonefun.rsutils.message.Messages;
+import pl.redstonefun.rsutils.user.User;
 import pl.redstonefun.rsutils.yaml.YAML;
 import pl.redstonefun.rsutils.yaml.YAML.type;
 
@@ -53,5 +54,6 @@ public class PlayerJoinListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e){
 		e.setJoinMessage(Messages.join.replace("%user", e.getPlayer().getName()));
+		new User(e.getPlayer()).updateListName();
 	}
 }

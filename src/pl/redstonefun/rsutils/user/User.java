@@ -18,6 +18,8 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import pl.redstonefun.rsutils.exceptions.LastLocationNotFound;
 import pl.redstonefun.rsutils.message.Messages;
+import pl.redstonefun.rsutils.yaml.YAML;
+import pl.redstonefun.rsutils.yaml.YAML.type;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -112,7 +114,21 @@ public class User {
 	}
 	
 	public String getColoredName(){
-		return user.getPrefix() + getName();
+		return ChatColor.translateAlternateColorCodes('&', user.getPrefix() + getName());
+	}
+	
+	public String getGroup(){
+		return (user.getGroups()[0]).getName();
+	}
+	
+	public String getChatFormat(){
+		String format = YAML.getString(type.CONFIG, "format." + getGroup());
+		if(format != null){
+			format = format.replace("{NICK}", getColoredName());
+		} else {
+			format = getColoredName() + "&f: {MESSAGE}";
+		}
+		return ChatColor.translateAlternateColorCodes('&', format);
 	}
 	
 	public void jump(double height, int speed){
@@ -132,6 +148,15 @@ public class User {
 	
 	public Selection getSelection(){
 		return we.getSelection(player);
+	}
+	
+	public void updateListName(){
+		String nick = getColoredName();
+		if(nick.length() > 16){
+			player.setPlayerListName(nick.substring(0,16));
+		} else {
+			player.setPlayerListName(nick);
+		}
 	}
 	
 	public boolean canBuildHere(Location loc){
