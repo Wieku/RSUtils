@@ -1,7 +1,6 @@
 package pl.redstonefun.rsutils.main;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
@@ -9,28 +8,32 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+
 import pl.redstonefun.rsutils.commands.Commands;
 import pl.redstonefun.rsutils.listeners.Listeners;
+import pl.redstonefun.rsutils.listeners.PlayerSignEditingListener;
 import pl.redstonefun.rsutils.yaml.YAML;
 
 public class Main extends JavaPlugin {
 	
 	public static Logger logger;
-	public HashMap<String, pl.redstonefun.rsutils.api.Command> commandsList = new HashMap<String, pl.redstonefun.rsutils.api.Command>();
 	public static Main instance;
 	public static String pluginFolder;
 	public PluginManager manager;
+	public static ProtocolManager pManager;
 	
 	@Override
 	public void onEnable() {
 		pluginFolder = getDataFolder().getAbsolutePath() + File.separator;
 		instance = this;
 		logger = getLogger();
-		
+		pManager = ProtocolLibrary.getProtocolManager();
 		manager = getServer().getPluginManager();
 		
 		YAML.loadConfigs();
-		// Dynamiczne ³adowanie komend
+		
 		try {
 			Commands commands = new Commands();
 			commands.registerCommands();
@@ -40,7 +43,12 @@ public class Main extends JavaPlugin {
 			e.printStackTrace();
 			manager.disablePlugin(this);
 		}
-		//Koniec
+		
+		PlayerSignEditingListener sl = new PlayerSignEditingListener(this);
+		
+		manager.registerEvents(sl, this);
+		pManager.addPacketListener(sl);
+		
 		logger.info("Plugin zostal zaladowany!");
 	}
 	

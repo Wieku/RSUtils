@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="E:/Projekty/RSUtils/libs/redstone.jar"/>
 	<classpathentry kind="lib" path="E:/Projekty/RSUtils/libs/WorldEditPlots.jar"/>
 	<classpathentry kind="lib" path="E:/Projekty/RSUtils/libs/WorldGuard.jar"/>
+	<classpathentry kind="lib" path="E:/Projekty/RSUtils/libs/ProtocolLib-3.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
