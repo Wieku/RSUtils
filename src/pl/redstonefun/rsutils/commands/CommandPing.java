@@ -14,4 +14,14 @@ public class CommandPing implements Command {
 		sender.sendMessage(ChatColor.AQUA + "Pong!");
 	}
 
+	@Override
+	public int getMin() {
+		return 0;
+	}
+
+	@Override
+	public int getMax() {
+		return -1;
+	}
+
 }

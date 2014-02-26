@@ -3,6 +3,7 @@ package pl.redstonefun.rsutils.yaml;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -90,5 +91,13 @@ public class YAML {
 		YamlConfiguration con = configs.get(t);
 		con.set(path, value);
 		configs.put(t, con);
+	}
+	
+	public static boolean isSet(type t, String path){
+		return configs.get(t).isSet(path);
+	}
+	
+	public static Set<String> getMainKeys(type t){
+		return configs.get(t).getKeys(false);
 	}
 }

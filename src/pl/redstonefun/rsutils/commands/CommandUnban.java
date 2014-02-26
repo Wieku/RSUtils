@@ -53,4 +53,14 @@ public class CommandUnban implements Command{
 		
 	}
 
+	@Override
+	public int getMin() {
+		return 1;
+	}
+
+	@Override
+	public int getMax() {
+		return 1;
+	}
+
 }

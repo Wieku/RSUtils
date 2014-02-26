@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 public class Messages {
 
 	public static String hasNoPermission = ChatColor.RED + "Nie masz dostêpu do tej komendy!";
-	public static String notEnoughArguments = ChatColor.RED + "Zbyt ma³o argumentów!";
+	public static String notEnoughArguments = ChatColor.RED + "Z³a iloœæ argumentów!";
 	public static String saveFileError = ChatColor.RED + "Problem z zapisem pliku!";
 	public static String youAreBanned = "Zosta³eœ zbanowany na sta³e za: %reason";
 	public static String youAreTempBanned = "Zosta³eœ zbanowany do: %time za: %reason";
@@ -17,4 +17,5 @@ public class Messages {
 	public static String teleport = ChatColor.GREEN + "Teleportowanie do: %loc. ";
 	public static String msgToMe = "&7&o[ %user &7&o-> Ja ]&r ";
 	public static String msgToHim = "&7&o[ Ja &7-> %user &7&o]&r ";
+	public static String warpNotFound = ChatColor.RED + "Warp nie istnieje!";
 }

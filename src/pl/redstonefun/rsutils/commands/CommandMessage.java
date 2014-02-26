@@ -14,6 +14,16 @@ import pl.redstonefun.rsutils.user.User;
 public class CommandMessage implements Command{
 
 	@Override
+	public int getMin() {
+		return 1;
+	}
+
+	@Override
+	public int getMax() {
+		return -1;
+	}
+	
+	@Override
 	public void exec(CommandSender sender, String command, String[] args) {
 		
 		if(args.length < 1){

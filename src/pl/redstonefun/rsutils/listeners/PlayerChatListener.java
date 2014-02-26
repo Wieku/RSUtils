@@ -23,6 +23,8 @@ public class PlayerChatListener implements Listener {
 		format = format.replace("{MESSAGE}", message);
 		
 		e.setFormat((user.hasPermissionSilent("rsutils.chatcolor")?ChatColor.translateAlternateColorCodes('&', format):format));
+		
 		user.updateListName();
+		
 	}
 }

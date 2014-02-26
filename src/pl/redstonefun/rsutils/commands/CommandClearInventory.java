@@ -9,7 +9,17 @@ import pl.redstonefun.rsutils.user.User;
 
 @RSCommand(command = "clearinventory", description="Czyœci ekwipunek", aliases = {"ci"})
 public class CommandClearInventory implements Command{
+	
+	@Override
+	public int getMin() {
+		return 0;
+	}
 
+	@Override
+	public int getMax() {
+		return 0;
+	}
+	
 	@Override
 	public void exec(CommandSender sender, String command, String[] args) {
 		if(sender instanceof Player){
@@ -19,5 +29,7 @@ public class CommandClearInventory implements Command{
 			}
 		}
 	}
+
+
 	
 }

@@ -34,5 +34,15 @@ public class CommandReply implements Command{
 		}
 		
 	}
+
+	@Override
+	public int getMin() {
+		return 0;
+	}
+
+	@Override
+	public int getMax() {
+		return -1;
+	}
 	
 }

@@ -20,6 +20,16 @@ import pl.redstonefun.rsutils.yaml.YAML;
 public class CommandTempban implements Command{
 
 	@Override
+	public int getMin() {
+		return 1;
+	}
+
+	@Override
+	public int getMax() {
+		return -1;
+	}
+	
+	@Override
 	public void exec(CommandSender sender, String command, String[] args) {
 		
 		if(!(sender instanceof BlockCommandSender)){
@@ -31,63 +41,54 @@ public class CommandTempban implements Command{
 					return;
 				}
 			}
-			
-			if(args.length < 2){
-				sender.sendMessage(Messages.notEnoughArguments);
-			} else {
 				
-				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+			OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
 				
-				String reason = "Admin ma zawsze racjê!";
+			String reason = "Admin ma zawsze racjê!";
 				
-				if(args.length > 2){
-					reason = "";
-					for(int i = 2; i < args.length; i++){
-						reason += (i==2?"":" ") + args[i];
-					}
+			if(args.length > 2){
+				reason = "";
+				for(int i = 2; i < args.length; i++){
+					reason += (i==2?"":" ") + args[i];
 				}
-				
-				String name = offlinePlayer.getName().toLowerCase();
-				
-				String t = args[1];
-				CalendarEx cx = new CalendarEx();
-				cx.setToNow();
-				
-				try {
-					
-					if(t.contains("/")){
-						String[] split = t.split("/");
-						for(String i : split){
-							cx.add(i);
-						}
-					} else {
-						cx.add(t);
-					}
-					
-					YAML.set(YAML.type.BANS, name + ".for", cx.getInString());
-					YAML.set(YAML.type.BANS, name + ".reason", reason);
-					YAML.set(YAML.type.BANS, name + ".who", sender.getName());
-					
-					try {
-						YAML.saveAndReload(YAML.type.BANS);
-					} catch (Exception e) {
-						sender.sendMessage(Messages.saveFileError);
-						e.printStackTrace();
-					}
-					
-					offlinePlayer.setBanned(true);
-					if(offlinePlayer.isOnline()) offlinePlayer.getPlayer().kickPlayer(Messages.youAreTempBanned.replace("%time", cx.getInString()).replace("%reason", reason));
-					Bukkit.broadcastMessage(Messages.userTempBanned.replace("%user", name).replace("%reason", reason).replace("%time", cx.getInString()));
-				} catch (ParseException e){
-					sender.sendMessage(ChatColor.RED + "Wadliwy format czasu!");
-				}
-				
-				
-				
 			}
 			
-		}
-		
+			String name = offlinePlayer.getName().toLowerCase();
+				
+			String time = args[1];
+			CalendarEx cx = new CalendarEx();
+			cx.setToNow();
+			
+			try {
+					
+				if(time.contains("/")){
+					for(String i : time.split("/")){
+						cx.add(i);
+					}
+				} else {
+					cx.add(time);
+				}
+					
+				YAML.set(YAML.type.BANS, name + ".for", cx.getInString());
+				YAML.set(YAML.type.BANS, name + ".reason", reason);
+				YAML.set(YAML.type.BANS, name + ".who", sender.getName());
+					
+				try {
+					YAML.saveAndReload(YAML.type.BANS);
+				} catch (Exception e) {
+					sender.sendMessage(Messages.saveFileError);
+					e.printStackTrace();
+				}
+				
+				offlinePlayer.setBanned(true);
+				
+				if(offlinePlayer.isOnline()){
+					offlinePlayer.getPlayer().kickPlayer(Messages.youAreTempBanned.replace("%time", cx.getInString()).replace("%reason", reason));
+				}
+				Bukkit.broadcastMessage(Messages.userTempBanned.replace("%user", name).replace("%reason", reason).replace("%time", cx.getInString()));
+			} catch (ParseException e){
+				sender.sendMessage(ChatColor.RED + "Wadliwy format czasu!");
+			}				
+		}		
 	}
-
 }
