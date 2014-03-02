@@ -2,6 +2,8 @@ package pl.redstonefun.rsutils.listeners;
 
 import java.text.ParseException;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -53,7 +55,14 @@ public class PlayerJoinListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e){
-		e.setJoinMessage(Messages.join.replace("%user", e.getPlayer().getName()));
+		User user = new User(e.getPlayer());
+		if(e.getPlayer().hasPlayedBefore()){
+			e.setJoinMessage(Messages.join.replace("%user", user.getColoredName()));
+		} else {
+			e.setJoinMessage(ChatColor.AQUA + "Witamy " + user.getColoredName() + ChatColor.AQUA + " pierwszy raz na serwerze!");
+		}
+		user.sendMessage("&cWitaj na serwerze RedstoneFun.pl!");
+		user.sendMessage("&a" + Bukkit.getOnlinePlayers().length + " na " + Bukkit.getMaxPlayers() + " jest dostêpnych. Unikalnych wejœæ: " + Bukkit.getOfflinePlayers().length);
 		new User(e.getPlayer()).updateListName();
 	}
 }

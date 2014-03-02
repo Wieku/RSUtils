@@ -115,6 +115,10 @@ public class User {
 		return player.getLocation();
 	}
 	
+	public int getRank(){
+		return (user.getGroups()[0]).getRank();
+	}
+	
 	public Selection getSelection(){
 		return we.getSelection(player);
 	}
@@ -138,6 +142,10 @@ public class User {
 		} else {
 			return true;
 		}
+	}
+	
+	public boolean isFlying(){
+		return player.isFlying();
 	}
 	
 	public void jump(double height, int speed){
@@ -188,6 +196,14 @@ public class User {
 		player.setItemInHand(stack);
 	}
 
+	public void setFlySpeed(float speed){
+		player.setFlySpeed(speed);
+	}
+	
+	public void setWalkSpeed(float speed){
+		player.setWalkSpeed(speed);
+	}
+	
 	public void teleport(User user){
 		teleport(user.getPlayer());
 	}
@@ -217,13 +233,13 @@ public class User {
 	}
 	
 	public void teleportToLast(){
-		Location loc = lastLocation.get(this);
+		Location loc = lastLocation.get(getPlayer());
 		if(loc != null){
 			sendMessage(Messages.teleport.replace("%loc", "ostatniej lokacji"));
 			registerLast(false);
 			teleport(loc);
 		} else {
-			sendMessage("&4 Nie posiadasz ostatniej lokacji");
+			sendMessage("&4Nie posiadasz ostatniej lokacji!");
 		}
 	}
 	

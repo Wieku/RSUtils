@@ -3,6 +3,7 @@ package pl.redstonefun.rsutils.main;
 import java.io.File;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -72,19 +73,33 @@ public class Main extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		pl.redstonefun.rsutils.api.Command comm = Commands.commands.get(command.getName());
 		if(comm != null){
-			if(comm.getMin() > args.length){
-				sender.sendMessage(Messages.notEnoughArguments);
-				return true;
-			}
-			if((comm.getMax() != -1) && args.length > comm.getMax()){
-				sender.sendMessage(Messages.notEnoughArguments);
-				return true;
-			}		
-			comm.exec(sender, command.getName(), args);
+			if(comm.getSenders() != null){
+				for(Object x : comm.getSenders()){
+					if(((Class<?>)x).isInstance(sender)){
+						execute(comm, sender, command, args);
+						return true;
+					}
+				}
+				sender.sendMessage(ChatColor.RED + "Nie mo¿esz wykonaæ tej komendy");
+			} else {
+				execute(comm, sender, command, args);
+			}	
 		} else {
 			sender.sendMessage("Nieznana komenda. Wpisz /help by zobaczyæ pomoc");
 		}
-		
 		return true;
-	};
+	}
+	
+	public void execute(pl.redstonefun.rsutils.api.Command comm, CommandSender sender, Command command, String[] args){
+		if(comm.getMin() > args.length){
+			sender.sendMessage(Messages.notEnoughArguments);
+			return;
+		}
+		if((comm.getMax() != -1) && args.length > comm.getMax()){
+			sender.sendMessage(Messages.notEnoughArguments);
+			return;
+		}		
+		comm.exec(sender, command.getName(), args);		
+	}
+	
 }

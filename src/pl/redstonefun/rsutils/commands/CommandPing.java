@@ -24,4 +24,8 @@ public class CommandPing implements Command {
 		return -1;
 	}
 
+	@Override
+	public Object[] getSenders() {
+		return null;
+	}
 }

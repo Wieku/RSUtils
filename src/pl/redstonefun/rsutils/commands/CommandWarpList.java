@@ -23,6 +23,11 @@ public class CommandWarpList implements Command {
 	public int getMax() {
 		return 0;
 	}
+	
+	@Override
+	public Object[] getSenders() {
+		return null;
+	}
 
 	@Override
 	public void exec(CommandSender sender, String command, String[] args) {
@@ -39,5 +44,6 @@ public class CommandWarpList implements Command {
 		}		
 		sender.sendMessage(ChatColor.AQUA + "Dostêpne warpy: " + all);
 	}
+
 
 }

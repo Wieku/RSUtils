@@ -23,6 +23,11 @@ public class CommandSetWarp implements Command{
 	}
 
 	@Override
+	public Object[] getSenders() {
+		return new Object[]{Player.class};
+	}
+	
+	@Override
 	public void exec(CommandSender sender, String command, String[] args) {
 		
 		User user = new User((Player) sender);

@@ -39,5 +39,9 @@ public class CommandHat implements Command {
 	public int getMax() {
 		return 0;
 	}
-
+	
+	@Override
+	public Object[] getSenders() {
+		return new Object[]{Player.class};
+	}
 }

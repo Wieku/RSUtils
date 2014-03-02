@@ -24,6 +24,11 @@ public class CommandMessage implements Command{
 	}
 	
 	@Override
+	public Object[] getSenders() {
+		return null;
+	}
+	
+	@Override
 	public void exec(CommandSender sender, String command, String[] args) {
 		
 		if(args.length < 1){
@@ -33,7 +38,7 @@ public class CommandMessage implements Command{
 			User forWho = new User(Bukkit.getPlayer(args[0]));
 			
 			if(!forWho.isOnline()){
-				sender.sendMessage(Messages.userOffline.replace("%user", args[0]));
+				sender.sendMessage(Messages.userOffline);
 				return;
 			}
 			

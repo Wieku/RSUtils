@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import pl.redstonefun.rsutils.api.Command;
@@ -27,6 +28,11 @@ public class CommandTempban implements Command{
 	@Override
 	public int getMax() {
 		return -1;
+	}
+	
+	@Override
+	public Object[] getSenders() {
+		return new Object[]{Player.class, ConsoleCommandSender.class};
 	}
 	
 	@Override

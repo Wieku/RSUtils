@@ -45,4 +45,8 @@ public class CommandReply implements Command{
 		return -1;
 	}
 	
+	@Override
+	public Object[] getSenders() {
+		return new Object[]{Player.class};
+	}
 }

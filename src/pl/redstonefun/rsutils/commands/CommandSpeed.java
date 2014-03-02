@@ -1,0 +1,59 @@
+package pl.redstonefun.rsutils.commands;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import pl.redstonefun.rsutils.api.Command;
+import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.user.User;
+
+@RSCommand(command="speed", description="Ustawia twoj¹ prêdkoœæ")
+public class CommandSpeed implements Command {
+
+	@Override
+	public int getMin() {
+		return 1;
+	}
+
+	@Override
+	public int getMax() {
+		return 1;
+	}
+
+	@Override
+	public Object[] getSenders() {
+		return new Object[]{Player.class};
+	}
+
+	@Override
+	public void exec(CommandSender sender, String command, String[] args) {
+		User user = new User((Player)sender);
+		if(user.hasPermission("rsutils.speed")){
+			float flo;
+			try{
+				flo = Float.parseFloat(args[0]);
+			} catch(NumberFormatException e){
+				user.sendMessage("&4Podaj liczbê!");
+				return;
+			}
+
+			if(user.isFlying()){		
+				if(flo > 10.0F || flo < 0.0F){
+					user.sendMessage("&4Liczba musi byæ miêdzy 0.0 a 10.0!");
+					return;
+				}
+				user.setFlySpeed(flo/10);
+				user.sendMessage("&aUstawiono prêdkoœæ chodzenia na: " + flo);
+			} else {	
+				if(flo > 5.0F || flo < 0.0F){
+					user.sendMessage("&4Liczba musi byæ miêdzy 0.0 a 5.0!");
+					return;
+				}
+				user.setWalkSpeed(flo/5);
+				user.sendMessage("&aUstawiono prêdkoœæ latania na: " + flo);
+			}
+			
+		}
+	}
+
+}
