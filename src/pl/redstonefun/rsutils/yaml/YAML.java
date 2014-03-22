@@ -16,7 +16,8 @@ public class YAML {
 		PWARPS,
 		HOMES,
 		CONFIG,
-		BANS;
+		BANS,
+		DATABASE;
 	}
 	
 	private static HashMap<type, YamlConfiguration> configs = new HashMap<type, YamlConfiguration>();
