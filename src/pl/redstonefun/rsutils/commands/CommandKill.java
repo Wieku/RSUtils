@@ -1,59 +1,50 @@
 package pl.redstonefun.rsutils.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
-import pl.redstonefun.rsutils.message.Messages;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
+import pl.redstonefun.rsutils.message.I18n;
 import pl.redstonefun.rsutils.user.User;
 
 @RSCommand(command="kill", description="Zabija gracza")
 public class CommandKill implements Command {
 
 	@Override
-	public int getMin() {
-		return 0;
+	public int[] getMinMax() {
+		return new int[]{0,1};
+	}
+	
+	@Override
+	public Sender getSenders() {
+		return Sender.ALL;
 	}
 
 	@Override
-	public int getMax() {
-		return 1;
-	}
-
-	@Override
-	public Object[] getSenders() {
-		return null;
-	}
-
-	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
-		
+	public void exec(CommandSender sender, String command, Arguments args) {
 		if(args.length == 0){
 			if(sender instanceof Player){
-				((Player)sender).setHealth(0.0D);
+				RSUtils.getUser((Player)sender).kill();
 			} else {
-				sender.sendMessage(ChatColor.RED + "Nie mo¿esz wykonaæ tej komendy!");
+				sender.sendMessage(I18n.UCANT.get());
 			}
 		} else {
 			if(sender instanceof Player){
-				User user = new User((Player)sender);
-				if(!user.hasPermission("rsutils.kill")){
+				if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.kill")){
 					return;
 				}
 			}
-			
-			Player player = Bukkit.getPlayer(args[0]);
-			if(player != null){
-				player.setHealth(0.0D);
+			User target = RSUtils.getUser(args.get(0));
+			if(target != null){
+				target.kill();
 			} else {
-				sender.sendMessage(Messages.userOffline);
+				sender.sendMessage(I18n.UOFF.get());
 			}
-			
 		}	
-		
 	}
 
 }

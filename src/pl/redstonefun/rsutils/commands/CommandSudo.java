@@ -1,49 +1,41 @@
 package pl.redstonefun.rsutils.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.message.Messages;
 import pl.redstonefun.rsutils.user.User;
 
-@RSCommand(command="sudo", description="Wskazany gracz wykona komendê")
+@RSCommand(command="sudo", description="Wskazany gracz wykona komendï¿½")
 public class CommandSudo implements Command {
 
 	@Override
-	public int getMin() {
-		return 2;
+	public int[] getMinMax() {
+		return new int[]{2,-1};
 	}
 
 	@Override
-	public int getMax() {
-		return -1;
+	public Sender getSenders() {
+		return Sender.ALL;
 	}
 
 	@Override
-	public Object[] getSenders() {
-		return null;
-	}
-
-	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
+	public void exec(CommandSender sender, String command, Arguments args) {
 		
 		if(sender instanceof Player){
-			if(!new User((Player)sender).hasPermission("rsutils.sudo")){
+			if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.sudo")){
 				return;
 			}
 		}
 		
-		Player player = Bukkit.getPlayer(args[0]);
-		if(player != null){
-			User user = new User(player);
-			String comm = "";
-			for(int i = 1; i< args.length;i++){
-				comm += (i==1?"":" ") + args[i];
-			}
-			user.executeCommand(comm);
+		User user = RSUtils.getUser(args.get(0));
+		if(user != null){
+			user.executeCommand(args.getFT(1, args.length-1, " "));
 		} else {
 			sender.sendMessage(Messages.userOffline);
 		}

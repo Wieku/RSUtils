@@ -5,36 +5,34 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.user.User;
 
-@RSCommand(command="world",description="Teleportuje na spawn podanego œwiata")
+@RSCommand(command="world",description="Teleportuje na spawn podanego Å›wiata")
 public class CommandWorld implements Command {
 
 	@Override
-	public int getMin() {
-		return 1;
+	public int[] getMinMax() {
+		return new int[]{1,2};
 	}
 
 	@Override
-	public int getMax() {
-		return 2;
+	public Sender getSenders() {
+		return Sender.PLAYER;
 	}
 
 	@Override
-	public Object[] getSenders() {
-		return new Object[]{Player.class};
-	}
-
-	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
+	public void exec(CommandSender sender, String command, Arguments args) {
 		
-		User user = new User((Player)sender);
+		User user = RSUtils.getUser((Player)sender);
 		if(user.hasPermission("rsutils.world")){
-			World world = Bukkit.getWorld(args[0]);
+			World world = Bukkit.getWorld(args.get(0));
 			if(world == null){
-				user.sendMessage("&4Podany œwiat nie istnieje!");
+				user.sendMessage("&4Podany Å›wiat nie istnieje!");
 				return;
 			}
 			

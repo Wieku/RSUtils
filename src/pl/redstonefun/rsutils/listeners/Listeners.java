@@ -10,7 +10,7 @@ import java.util.zip.ZipFile;
 import org.bukkit.event.Listener;
 
 import pl.redstonefun.rsutils.api.RSListener;
-import pl.redstonefun.rsutils.main.Main;
+import pl.redstonefun.rsutils.main.RSUtils;
 
 public class Listeners {
 
@@ -27,8 +27,8 @@ public class Listeners {
 					Class<?> forCheck = Class.forName(name);
 					for(Annotation an : forCheck.getAnnotations()){
 						if(an instanceof RSListener){
-							Main.instance.manager.registerEvents((Listener) forCheck.newInstance(), Main.instance);
-							Main.logger.info("Zaladowano Listener: " + forCheck.getSimpleName());
+							RSUtils.instance.manager.registerEvents((Listener) forCheck.newInstance(), RSUtils.instance);
+							RSUtils.logger.info("Zaladowano Listener: " + forCheck.getSimpleName());
 							break;
 						}
 					}

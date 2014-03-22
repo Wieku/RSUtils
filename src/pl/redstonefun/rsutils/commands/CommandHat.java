@@ -4,44 +4,36 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
-import pl.redstonefun.rsutils.message.Messages;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
+import pl.redstonefun.rsutils.message.I18n;
 import pl.redstonefun.rsutils.user.User;
 
-@RSCommand(command = "hat", description = "Zmienia twoj¹ czapkê")
+@RSCommand(command = "hat", description = "Zmienia twojÄ… czapkÄ™")
 public class CommandHat implements Command {
 
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
-		
-		if(sender instanceof Player){
-			User user = new User((Player) sender);
-			if(user.hasPermission("tsutils.hat")){
-				ItemStack prevHat = user.getHat();
-				ItemStack currHat = user.getItemInHand();
-				user.setHat(currHat);
-				user.setItemInHand(prevHat);
-				user.sendMessage("&aCiesz siê now¹ czapk¹!");
-			}
-		} else {
-			sender.sendMessage(Messages.hasNoPermission);
+	public void exec(CommandSender sender, String command, Arguments args) {	
+		User user = RSUtils.getUser((Player) sender);
+		if(user.hasPermission("tsutils.hat")){
+			ItemStack prevHat = user.getHat();
+			ItemStack currHat = user.getItemInHand();
+			user.setHat(currHat);
+			user.setItemInHand(prevHat);
+			user.sendMessage(I18n.NEWHAT.get());
 		}
-
 	}
 
 	@Override
-	public int getMin() {
-		return 0;
+	public int[] getMinMax() {
+		return new int[]{0,0};
 	}
 
 	@Override
-	public int getMax() {
-		return 0;
-	}
-	
-	@Override
-	public Object[] getSenders() {
-		return new Object[]{Player.class};
+	public Sender getSenders() {
+		return Sender.PLAYER;
 	}
 }

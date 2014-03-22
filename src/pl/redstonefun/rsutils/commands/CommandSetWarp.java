@@ -4,8 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.user.User;
 import pl.redstonefun.rsutils.yaml.YAML;
 
@@ -13,38 +16,34 @@ import pl.redstonefun.rsutils.yaml.YAML;
 public class CommandSetWarp implements Command{
 
 	@Override
-	public int getMin() {
-		return 1;
+	public int[] getMinMax() {
+		return new int[]{1,1};
 	}
 
 	@Override
-	public int getMax() {
-		return 1;
-	}
-
-	@Override
-	public Object[] getSenders() {
-		return new Object[]{Player.class};
+	public Sender getSenders() {
+		return Sender.PLAYER;
 	}
 	
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
+	public void exec(CommandSender sender, String command, Arguments args) {
 		
-		User user = new User((Player) sender);
+		User user = RSUtils.getUser((Player) sender);
 		if(user.hasPermission("rsutils.warp.set")){
 			Location loc = user.getLocation();
 			YAML.type type = YAML.type.WARPS;
-			YAML.set(type, args[0]+".world", loc.getWorld().getName());
-			YAML.set(type, args[0]+".x", loc.getX());
-			YAML.set(type, args[0]+".y", loc.getY());
-			YAML.set(type, args[0]+".z", loc.getZ());
-			YAML.set(type, args[0]+".pitch", loc.getPitch());
-			YAML.set(type, args[0]+".yaw", loc.getYaw());
+			String name = args.get(0).toLowerCase();
+			YAML.set(type, name +".world", loc.getWorld().getName());
+			YAML.set(type, name +".x", loc.getX());
+			YAML.set(type, name +".y", loc.getY());
+			YAML.set(type, name +".z", loc.getZ());
+			YAML.set(type, name +".pitch", loc.getPitch());
+			YAML.set(type, name +".yaw", loc.getYaw());
 			try {
 				YAML.saveAndReload(type);
 				user.sendMessage("&aUtworzono!");
 			} catch (Exception e) {
-				user.sendMessage("&4Nie mo¿na ustawiæ warpa!");
+				user.sendMessage("&4Nie moÅ¼na ustawiÄ‡ warpa!");
 				e.printStackTrace();
 				return;
 			}

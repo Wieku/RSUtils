@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import pl.redstonefun.rsutils.main.Main;
+import pl.redstonefun.rsutils.main.RSUtils;
 
 public class YAML {
 	
@@ -45,7 +45,7 @@ public class YAML {
 	}
 	
 	public static void save(type type) throws Exception{
-		File file = new File(Main.pluginFolder + type.toString().toLowerCase() + ".yml");
+		File file = new File(RSUtils.pluginFolder + type.toString().toLowerCase() + ".yml");
 		configs.get(type).save(file);
 	}
 	
@@ -60,7 +60,7 @@ public class YAML {
 	}
 	
 	protected static void loadConf(type t){
-		File file = new File(Main.pluginFolder + t.toString().toLowerCase() + ".yml");
+		File file = new File(RSUtils.pluginFolder + t.toString().toLowerCase() + ".yml");
 		if(!file.exists()){
 			if(t != type.CONFIG){
 				try {
@@ -69,11 +69,11 @@ public class YAML {
 					e.printStackTrace();
 				}
 			} else {
-				Main.instance.saveDefaultConfig();
+				RSUtils.instance.saveDefaultConfig();
 			}
 		}
 		configs.put(t, YamlConfiguration.loadConfiguration(file));
-		Main.logger.info("Zaladowano plik yaml: " + t.toString().toLowerCase());
+		RSUtils.logger.info("Zaladowano plik yaml: " + t.toString().toLowerCase());
 	}
 	
 	public static String getString(type t, String path){
@@ -86,6 +86,10 @@ public class YAML {
 	
 	public static float getFloat(type t, String path){
 		return (float)configs.get(t).getDouble(path);
+	}
+	
+	public static int getInteger(type t, String path){
+		return configs.get(t).getInt(path);
 	}
 	
 	public static void set(type t, String path, Object value){

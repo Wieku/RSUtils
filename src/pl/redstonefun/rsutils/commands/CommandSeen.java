@@ -8,42 +8,39 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
-import pl.redstonefun.rsutils.user.User;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
 
 @RSCommand(command="seen")
 public class CommandSeen implements Command {
 
 	@Override
-	public int getMin() {
-		return 1;
+	public int[] getMinMax() {
+		return new int[]{1,1};
 	}
 
 	@Override
-	public int getMax() {
-		return 1;
-	}
-
-	@Override
-	public Object[] getSenders() {
-		return null;
+	public Sender getSenders() {
+		return Sender.ALL;
 	}
 	
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
+	public void exec(CommandSender sender, String command, Arguments args) {
 		
 		if(sender instanceof Player){
-			if(!new User((Player)sender).hasPermission("rsutils.seen")){
+			if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.seen")){
 				return;
 			}
 		}
 		
 		String status = "";
-		OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+		OfflinePlayer player = Bukkit.getOfflinePlayer(args.get(0));
 		if(player.hasPlayedBefore()){
 			if(player.isOnline()){
-				status = ChatColor.GREEN + "Dostêpny";
+				status = ChatColor.GREEN + "DostÄ™pny";
 			} else {
 				long last = new Date().getTime() - player.getLastPlayed();
 				last /= 1000;
@@ -51,10 +48,10 @@ public class CommandSeen implements Command {
 				long min = (last / 60) % 60;
 				long hour = (last / (60*60)) % 24;
 				long day = (last / (60*60*24));
-				status = ChatColor.RED + "Niedostêpny od: " + day + " dni, "+ hour + " godzin, "+ min + " minut, "+ sec + " sekund";
+				status = ChatColor.RED + "NiedostÄ™pny od: " + day + " dni, "+ hour + " godzin, "+ min + " minut, "+ sec + " sekund";
 			}
 		} else {
-			status = ChatColor.GRAY + "Nigdy nie gra³";
+			status = ChatColor.GRAY + "Nigdy nie graÅ‚";
 		}
 		sender.sendMessage(ChatColor.GREEN + "Gracz: " + player.getName() + ", Status: " + status);
 	}
