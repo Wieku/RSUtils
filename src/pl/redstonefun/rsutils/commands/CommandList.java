@@ -3,41 +3,34 @@ package pl.redstonefun.rsutils.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
-import pl.redstonefun.rsutils.user.PlayerByRankSorter;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.user.User;
 
-@RSCommand(command="list", description="Wyœwietla listê graczy", aliases={"ls","players"})
+@RSCommand(command="list", description="WyÅ›wietla listÄ™ graczy", aliases={"ls","players"})
 public class CommandList implements Command {
 
 	@Override
-	public int getMin() {
-		return 0;
+	public int[] getMinMax() {
+		return new int[]{0,0};
 	}
 
 	@Override
-	public int getMax() {
-		return 0;
-	}
-
-	@Override
-	public Object[] getSenders() {
-		return null;
+	public Sender getSenders() {
+		return Sender.ALL;
 	}
 	
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
-		Player[] players = Bukkit.getOnlinePlayers();
-		String lista="";		
-		for(Player play : new PlayerByRankSorter().sort(Bukkit.getOnlinePlayers())){
-			User user = new User(play);
-			String nick = /*(User.isAfk(play)?ChatColor.GRAY+"[AFK]":"") +*/ user.getColoredName();
-			lista += nick + ChatColor.RESET + ChatColor.GRAY + ", ";
+	public void exec(CommandSender sender, String command, Arguments args) {
+		String lista="";
+		for(User user : RSUtils.sortByRank(RSUtils.getVisibleUsers())){
+			lista += (user.isAfk()?ChatColor.GRAY+"[AFK]":"") + user.getColoredName() + ChatColor.RESET + ChatColor.GRAY + ", ";
 		}
-		sender.sendMessage(ChatColor.GREEN+"Graczy na serwerze (" + players.length +" na "+Bukkit.getMaxPlayers()+"):");
+		sender.sendMessage(ChatColor.GREEN+"Graczy na serwerze (" + RSUtils.getUsers().length +" na "+Bukkit.getMaxPlayers()+"):");
 		sender.sendMessage(lista);
 
 	}

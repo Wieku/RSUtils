@@ -20,7 +20,7 @@ import org.bukkit.plugin.SimplePluginManager;
 
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
-import pl.redstonefun.rsutils.main.Main;
+import pl.redstonefun.rsutils.main.RSUtils;
 
 
 public class Commands {
@@ -44,7 +44,7 @@ public class Commands {
 							if(Arrays.asList(forCheck.getInterfaces()).contains(Command.class)){
 								list.add(forCheck);
 							} else {
-								Main.logger.severe("Nieprawidlowa skladnia klasy: " + name);						
+								RSUtils.logger.severe("Nieprawidlowa skladnia klasy: " + name);						
 							}
 						}
 					}
@@ -61,7 +61,7 @@ public class Commands {
 		
 		for(Class<?> classe : list){
 			RSCommand annotation = classe.getAnnotation(RSCommand.class);
-			PluginCommand command = getCommand(annotation.command(), Main.instance);
+			PluginCommand command = getCommand(annotation.command(), RSUtils.instance);
 					
 			String[] aliases = annotation.aliases();
 			if(aliases != null){
@@ -69,10 +69,10 @@ public class Commands {
 			}
 					
 			command.setDescription(annotation.description());	
-			getCommandMap().register(Main.instance.getDescription().getName(), command);
+			getCommandMap().register(RSUtils.instance.getDescription().getName(), command);
 					
 			commands.put(annotation.command(), (Command)classe.newInstance());
-			Main.logger.info("Zaladowano komende: " + annotation.command());
+			RSUtils.logger.info("Zaladowano komende: " + annotation.command());
 		}
 		
 	}
@@ -86,7 +86,7 @@ public class Commands {
 	public static CommandMap getCommandMap() throws Exception{
 		Field field = SimplePluginManager.class.getDeclaredField("commandMap");
 		field.setAccessible(true);
-		return (CommandMap)(field.get(Main.instance.getServer().getPluginManager()));
+		return (CommandMap)(field.get(RSUtils.instance.getServer().getPluginManager()));
 	}
 	
 }

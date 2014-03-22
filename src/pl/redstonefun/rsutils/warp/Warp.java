@@ -23,6 +23,11 @@ public class Warp {
 		location = new Location(world, x, y, z, yaw, pitch);
 	}
 	
+	public Warp(String name, Location loc){
+		this.name = name;
+		location = loc;
+	}
+	
 	public Location toLocation(){
 		return location;
 	}

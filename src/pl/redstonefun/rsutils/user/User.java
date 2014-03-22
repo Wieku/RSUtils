@@ -1,6 +1,8 @@
 package pl.redstonefun.rsutils.user;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,14 +10,18 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
+import pl.redstonefun.rsutils.message.I18n;
 import pl.redstonefun.rsutils.message.Messages;
 import pl.redstonefun.rsutils.warp.Warp;
 import pl.redstonefun.rsutils.yaml.YAML;
@@ -28,6 +34,9 @@ public class User {
 	protected Player player;
 	protected PermissionUser user;
 	protected static HashMap<Player, Location> lastLocation = new HashMap<Player, Location>();
+	protected static List<Player> afkPlayers = new ArrayList<Player>();
+	protected static List<Player> vanishedPlayers = new ArrayList<Player>();
+	protected static HashMap<Player, Long> lastActivity = new HashMap<Player, Long>();
 	protected static HashMap<Player, Player> lastMessageSender = new HashMap<Player, Player>();
 	protected static WorldGuardPlugin WG = WGBukkit.getPlugin();
 	protected static WorldEditPlugin we = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
@@ -107,12 +116,24 @@ public class User {
 		return player.getItemInHand();
 	}
 	
+	public Inventory getInventory() {
+		return player.getInventory();
+	}
+	
 	public String getName(){
 		return player.getName();
 	}
 	
+	public long getLastActivity(){
+		return lastActivity.get(getPlayer());
+	}
+	
 	public Location getLocation(){
 		return player.getLocation();
+	}
+	
+	public String getListName(){
+		return getPlayer().getPlayerListName();
 	}
 	
 	public int getRank(){
@@ -136,6 +157,10 @@ public class User {
 		return user.has(permission);
 	}
 	
+	public boolean isAfk(){
+		return afkPlayers.contains(getPlayer());
+	}
+	
 	public boolean isOnline(){
 		if(player == null || !player.isOnline()){
 			return false;
@@ -148,6 +173,10 @@ public class User {
 		return player.isFlying();
 	}
 	
+	public boolean isVanished(){
+		return vanishedPlayers.contains(getPlayer());
+	}
+	
 	public void jump(double height, int speed){
 		Location location = player.getLocation();
 		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 200);
@@ -155,10 +184,29 @@ public class User {
 		player.setVelocity(location.getDirection().setY(height).multiply(speed));
 	}
 	
+
+	public void kick(String string) {
+		player.kickPlayer(string);	
+	}
+	
+	public void kill(){
+		player.setHealth(0.0D);
+	}
+	
+	public void login(){
+		updateLastActivity();
+		updateListName();
+	}
+	
+	public void left(){
+		lastActivity.remove(getPlayer());
+		afkPlayers.remove(getPlayer());
+	}
+	
 	public String registerLast(boolean notify){
 		if(hasPermissionSilent("rsutils.back")){
 			lastLocation.put(getPlayer(), player.getLocation());
-			return (notify?"Wpisz /back by tutaj powróciæ":"");
+			return (notify?"Wpisz /back by tutaj powrÃ³ciÄ‡":"");
 		} else {
 			return "";
 		}
@@ -188,6 +236,17 @@ public class User {
 		lastMessageSender.put(forWho.getPlayer(), getPlayer());
 	}
 	
+	public void setAfk(boolean state){
+		if(state){
+			afkPlayers.add(getPlayer());
+			Bukkit.broadcastMessage(I18n.UAFK.getE().write(0, getColoredName()).get());
+		} else {
+			updateLastActivity();
+			afkPlayers.remove(getPlayer());
+			Bukkit.broadcastMessage(I18n.UNOAFK.getE().write(0, getColoredName()).get());
+		}
+	}
+	
 	public void setHat(ItemStack itemstack){
 		player.getInventory().setHelmet(itemstack);
 	}
@@ -200,6 +259,24 @@ public class User {
 		player.setFlySpeed(speed);
 	}
 	
+	public void setVanished(boolean bool){
+		if(bool){
+			vanishedPlayers.add(getPlayer());
+			for(Player pl: Bukkit.getOnlinePlayers()){
+					pl.hidePlayer(getPlayer());	
+					System.out.println(pl.canSee(getPlayer()));
+
+			}
+		} else {
+			vanishedPlayers.remove(getPlayer());
+			for(Player pl: Bukkit.getOnlinePlayers()){
+					pl.showPlayer(getPlayer());
+					System.out.println(pl.canSee(getPlayer()));
+			}
+		}
+		
+	}
+	
 	public void setWalkSpeed(float speed){
 		player.setWalkSpeed(speed);
 	}
@@ -210,6 +287,7 @@ public class User {
 	
 	public void teleport(Player player) {
 		sendMessage(Messages.teleport.replace("%loc", player.getName()) + registerLast(true));
+		player.sendMessage(ChatColor.GREEN + getColoredName() + ChatColor.RESET + ChatColor.GREEN + " teleportuje siÄ™ do Ciebie");
 		this.player.teleport(player);
 	}
 
@@ -241,6 +319,15 @@ public class User {
 		} else {
 			sendMessage("&4Nie posiadasz ostatniej lokacji!");
 		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void updateInventory(){
+		player.updateInventory();
+	}
+	
+	public void updateLastActivity(){
+		lastActivity.put(getPlayer(), System.currentTimeMillis());
 	}
 	
 	public void updateListName(){

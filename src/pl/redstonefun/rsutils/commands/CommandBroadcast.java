@@ -5,43 +5,35 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
-import pl.redstonefun.rsutils.user.User;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
+import pl.redstonefun.rsutils.message.I18n;
 
-@RSCommand(command="broadcast", description="Wysy³a wiadomoœæ serwerow¹", aliases={"say"})
+@RSCommand(command="broadcast", description="WysyÅ‚a wiadomoÅ›Ä‡ serwerowÄ…", aliases={"say"})
 public class CommandBroadcast implements Command {
 
 	@Override
-	public int getMin() {
-		return 0;
+	public int[] getMinMax() {
+		return new int[]{0,-1};
 	}
 
 	@Override
-	public int getMax() {
-		return -1;
-	}
-	
-	@Override
-	public Object[] getSenders() {
-		return null;
+	public Sender getSenders() {
+		return Sender.ALL;
 	}
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
-		
-		String message = "";
-		for(int i=0;i<args.length;i++){
-			message += (i==0?"":" ") + args[i];
-		}
-		
+	public void exec(CommandSender sender, String command, Arguments args) {
+			
 		if(sender instanceof Player){
-			User user = new User((Player)sender);
-			if(!user.hasPermission("rsutils.broadcast")){
+			if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.broadcast")){
 				return;
 			}
 		}
-			
-		Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "[Powiadomienie] " + sender.getName() + ": " + ChatColor.translateAlternateColorCodes('&', message));
+		String message = args.getFT(0, args.length-1, " ");
+		Bukkit.broadcastMessage(I18n.SAY.getE().write(0, sender.getName()).write(1, ChatColor.translateAlternateColorCodes('&', message)).get());
 		
 	}
 

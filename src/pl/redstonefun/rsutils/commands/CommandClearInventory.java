@@ -3,38 +3,34 @@ package pl.redstonefun.rsutils.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
+import pl.redstonefun.rsutils.message.I18n;
 import pl.redstonefun.rsutils.user.User;
 
-@RSCommand(command = "clearinventory", description="Czyœci ekwipunek", aliases = {"ci"})
+@RSCommand(command = "clearinventory", description="Czyï¿½ci ekwipunek", aliases = {"ci"})
 public class CommandClearInventory implements Command{
 	
 	@Override
-	public int getMin() {
-		return 0;
-	}
-
-	@Override
-	public int getMax() {
-		return 0;
+	public int[] getMinMax() {
+		return new int[]{0,0};
 	}
 	
 	@Override
-	public Object[] getSenders() {
-		return new Object[]{Player.class};
+	public Sender getSenders() {
+		return Sender.PLAYER;
 	}
 	
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
-		if(sender instanceof Player){
-			User user  = new User((Player)sender);
-			if(user.hasPermission("rsutils.clearinventory")){
-				user.clearInventory();	
-			}
+	public void exec(CommandSender sender, String command, Arguments args) {
+		User user  = RSUtils.getUser((Player)sender);
+		if(user.hasPermission("rsutils.clearinventory")){
+			user.clearInventory();
+			user.sendMessage(I18n.CLEAREDINV.get());
 		}
 	}
 
-
-	
 }

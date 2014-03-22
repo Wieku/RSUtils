@@ -23,7 +23,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
-import pl.redstonefun.rsutils.main.Main;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.user.User;
 
 public class PlayerSignEditingListener extends PacketAdapter implements Listener {
@@ -47,7 +47,7 @@ public class PlayerSignEditingListener extends PacketAdapter implements Listener
 			final String[] lines = event.getPacket().getStringArrays().getValues().get(0);
 			event.setCancelled(true);
 			
-			Bukkit.getScheduler().runTaskAsynchronously(Main.instance, new Runnable() {				
+			Bukkit.getScheduler().runTaskAsynchronously(RSUtils.instance, new Runnable() {				
 				@Override
 				public void run() {
 					SignChangeEvent ev = new SignChangeEvent(sign.getBlock(), player, lines.clone());
@@ -58,9 +58,9 @@ public class PlayerSignEditingListener extends PacketAdapter implements Listener
 	                        sign.setLine(2, ev.getLine(2));
 	                        sign.setLine(3, ev.getLine(3));
 	                        sign.update(true);
-	                        player.sendMessage(ChatColor.GREEN + "Zedytowano tabliczkê!");
+	                        player.sendMessage(ChatColor.GREEN + "Zedytowano tabliczkÄ™!");
 	                    } else {
-	                        player.sendMessage(ChatColor.DARK_RED + "Anulowano edycjê tabliczki!");
+	                        player.sendMessage(ChatColor.DARK_RED + "Anulowano edycjÄ™ tabliczki!");
 	                    }
 				}
 			});
@@ -80,25 +80,25 @@ public class PlayerSignEditingListener extends PacketAdapter implements Listener
 						e.setCancelled(true);
 						Sign sign = (Sign) e.getClickedBlock().getState();
 						if(signsInEditing.containsValue(sign)){
-							user.sendMessage("&4Ju¿ ktoœ edytuje t¹ tabliczê!");	
+							user.sendMessage("&4JuÅ¼ ktoÅ› edytuje tÄ™ tabliczkÄ™!");	
 							return;
 						}
 						
 						String[] lines = sign.getLines();
 						for(int i=0;i<lines.length;i++){
-							lines[i] = lines[i].replace('§', '&');
+							lines[i] = lines[i].replace('Â§', '&');
 						}
 						
-						PacketContainer packetSign = Main.pManager.createPacket(PacketType.findLegacy(133));
-						PacketContainer packetEdit = Main.pManager.createPacket(PacketType.findLegacy(130));
+						PacketContainer packetSign = RSUtils.pManager.createPacket(PacketType.findLegacy(133));
+						PacketContainer packetEdit = RSUtils.pManager.createPacket(PacketType.findLegacy(130));
 						packetSign.getIntegers().write(0, sign.getX()).write(1, sign.getY()).write(2, sign.getZ());
 						
 			            packetEdit.getIntegers().write(0, sign.getX()).write(1, sign.getY()).write(2, sign.getZ());
 			            packetEdit.getStringArrays().write(0, lines);
 			           
 						try {
-							Main.pManager.sendServerPacket(e.getPlayer(), packetEdit);
-							Main.pManager.sendServerPacket(e.getPlayer(), packetSign);
+							RSUtils.pManager.sendServerPacket(e.getPlayer(), packetEdit);
+							RSUtils.pManager.sendServerPacket(e.getPlayer(), packetSign);
 							
 							signsInEditing.put(e.getPlayer(), sign);
 						} catch (InvocationTargetException e1) {

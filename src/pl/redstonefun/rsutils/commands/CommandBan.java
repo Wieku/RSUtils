@@ -3,37 +3,35 @@ package pl.redstonefun.rsutils.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
+import pl.redstonefun.rsutils.message.I18n;
 import pl.redstonefun.rsutils.message.Messages;
-import pl.redstonefun.rsutils.user.User;
 import pl.redstonefun.rsutils.yaml.YAML;
 
 @RSCommand(command = "ban", description="Banuje gracza")
 public class CommandBan implements Command{
 
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
+	public void exec(CommandSender sender, String command, Arguments args) {
 			
 		if(sender instanceof Player){
-			User user = new User((Player)sender);
-			if(!user.hasPermission("rsutils.ban")){
+			if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.ban")){
 				return;
 			}
 		}
 						
-		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args.get(0));
 				
-		String reason = "Admin ma zawsze racjê!";
+		String reason = "Admin ma zawsze racjÄ™!";
 				
 		if(args.length > 1){
-			reason = "";
-			for(int i = 1; i < args.length; i++){
-				reason += (i==1?"":" ") + args[i];
-			}
+			reason = args.getFT(1, args.length-1, " ");
 		}
 				
 		String name = offlinePlayer.getName().toLowerCase();
@@ -50,24 +48,19 @@ public class CommandBan implements Command{
 		}
 				
 		offlinePlayer.setBanned(true);
-		if(offlinePlayer.isOnline()) offlinePlayer.getPlayer().kickPlayer(Messages.youAreBanned.replace("%reason", reason));
-		Bukkit.broadcastMessage(Messages.userBanned.replace("%user", name).replace("%reason", reason));
+		if(offlinePlayer.isOnline()) offlinePlayer.getPlayer().kickPlayer(I18n.UBANNED.getE().write(0, reason).get());
+		Bukkit.broadcastMessage(I18n.USBANNED.getE().write(0, offlinePlayer.getName()).write(1, reason).get());
 				
 	}
 
 	@Override
-	public int getMin() {
-		return 1;
+	public int[] getMinMax() {
+		return new int[]{1,-1};
 	}
 
 	@Override
-	public int getMax() {
-		return -1;
-	}
-
-	@Override
-	public Object[] getSenders() {
-		return new Object[]{Player.class, ConsoleCommandSender.class};
+	public Sender getSenders() {
+		return new Sender(Sender.PLAYER, Sender.CONSOLE);
 	}
 
 }

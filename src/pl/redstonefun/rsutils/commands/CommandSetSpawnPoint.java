@@ -4,36 +4,33 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.api.Sender;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.user.User;
 
-@RSCommand(command="setspawnpoint", description="Ustawia spawn dla œwiata", aliases={"spp"})
+@RSCommand(command="setspawnpoint", description="Ustawia spawn dla Å›wiata", aliases={"spp"})
 public class CommandSetSpawnPoint implements Command {
 
 	@Override
-	public int getMin() {
-		return 0;
+	public int[] getMinMax() {
+		return new int[]{0,0};
 	}
 
 	@Override
-	public int getMax() {
-		return 0;
+	public Sender getSenders() {
+		return Sender.PLAYER;
 	}
 
 	@Override
-	public Object[] getSenders() {
-		return new Object[]{Player.class};
-	}
-
-	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
-		User user = new User((Player)sender);
+	public void exec(CommandSender sender, String command, Arguments args) {
+		User user = RSUtils.getUser((Player)sender);
 		if(user.hasPermission("rsutils.setspawnpoint")){
 			Location l = user.getLocation();
 			l.getWorld().setSpawnLocation(l.getBlockX(), l.getBlockY(), l.getBlockZ());
 			user.sendMessage("&aPrzestawiono spawnpointa!");
 		}
 	}
-
 }
