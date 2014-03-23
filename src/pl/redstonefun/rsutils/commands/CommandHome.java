@@ -38,7 +38,7 @@ public class CommandHome implements Command {
 	public void exec(CommandSender sender, String command, Arguments args) {
 		User user = RSUtils.getUser((Player)sender);
 		if(user.hasPermission("rsutils.home.tp")){
-			Connection connection = ConnectionGetter.get();
+			Connection connection = ConnectionGetter.getInstance().get();
 			if(args.length == 0){
 				try {
 					PreparedStatement st = connection.prepareStatement("SELECT * FROM `rs_home` WHERE `player`=?");
@@ -51,7 +51,7 @@ public class CommandHome implements Command {
 					}
 					set.close();
 					st.close();
-					connection.close();
+					ConnectionGetter.getInstance().release(connection);
 					user.sendMessage(text1);
 					user.sendMessage(list);
 				} catch(SQLException e){
@@ -81,7 +81,7 @@ public class CommandHome implements Command {
 					Warp warp = new Warp(args.get(0).toLowerCase(), new Location(Bukkit.getWorld(set.getString("world")), set.getDouble("x"), set.getDouble("y"), set.getDouble("z"), set.getFloat("yaw"), set.getFloat("pitch")));
 					set.close();
 					st.close();
-					connection.close();
+					ConnectionGetter.getInstance().release(connection);
 					user.teleport(warp);
 				} catch (SQLException e) {
 					e.printStackTrace();
