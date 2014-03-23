@@ -73,7 +73,7 @@ public class CommandSetHome implements Command {
 		float pitch = loc.getPitch();
 		float yaw = loc.getYaw();
 		
-		Connection connection = ConnectionGetter.get();
+		Connection connection = ConnectionGetter.getInstance().get();
 		try {
 			PreparedStatement st = connection.prepareStatement("INSERT INTO `rs`.`rs_home` (`id`, `player`, `name`, `x`, `y`, `z`, `pitch`, `yaw`, `world`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);");
 			st.setString(1, plName);
@@ -86,14 +86,14 @@ public class CommandSetHome implements Command {
 			st.setString(8, world);
 			st.executeUpdate();
 			st.close();
-			connection.close();
+			ConnectionGetter.getInstance().release(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private int getValuesAmount(String playerName) {
-		Connection connection = ConnectionGetter.get();
+		Connection connection = ConnectionGetter.getInstance().get();
 		try {
 			PreparedStatement st = connection.prepareStatement("SELECT * FROM `rs_home` WHERE `player`=?");
 			st.setString(1, playerName);
@@ -101,7 +101,7 @@ public class CommandSetHome implements Command {
 			int ret = set.getFetchSize();
 			set.close();
 			st.close();
-			connection.close();
+			ConnectionGetter.getInstance().release(connection);
 			return ret;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -110,7 +110,7 @@ public class CommandSetHome implements Command {
 	}
 
 	private boolean homeExists(String playerName, String homeName) {
-		Connection connection = ConnectionGetter.get();
+		Connection connection = ConnectionGetter.getInstance().get();
 		try {
 			PreparedStatement st = connection.prepareStatement("SELECT * FROM `rs_home` WHERE `player`=? AND `name'=?");
 			st.setString(1, playerName);
@@ -119,7 +119,7 @@ public class CommandSetHome implements Command {
 			boolean ret = (set.getFetchSize()>0);
 			set.close();
 			st.close();
-			connection.close();
+			ConnectionGetter.getInstance().release(connection);
 			return ret;
 		} catch (SQLException e) {
 			e.printStackTrace();

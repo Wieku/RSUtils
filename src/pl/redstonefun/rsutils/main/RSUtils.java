@@ -27,6 +27,8 @@ import pl.redstonefun.rsutils.commands.Commands;
 import pl.redstonefun.rsutils.listeners.Listeners;
 import pl.redstonefun.rsutils.listeners.PlayerSignEditingListener;
 import pl.redstonefun.rsutils.message.Messages;
+import pl.redstonefun.rsutils.mysql.ConnectionGetter;
+import pl.redstonefun.rsutils.mysql.MysqlPing;
 import pl.redstonefun.rsutils.profiler.Ticks;
 import pl.redstonefun.rsutils.user.TabList;
 import pl.redstonefun.rsutils.user.User;
@@ -78,11 +80,15 @@ public class RSUtils extends JavaPlugin implements Listener{
 		manager.registerEvents(this, this);
 		pManager.addPacketListener(sl);
 		
+		ConnectionGetter.start();
+		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TabList(), 0, 40);
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Ticks(), 0, 1);
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new AfkTimer(), 0, 20);
+		
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new MysqlPing(), 0, 200);
 		
 		//Bukkit.getScheduler().runTaskLater(this, new BackupWorlds(), 100);
 		
@@ -96,6 +102,7 @@ public class RSUtils extends JavaPlugin implements Listener{
 	
 	@Override
 	public void onDisable() {
+		ConnectionGetter.stop();
 		logger.info("Plugin zostal wylaczony!");
 	}
 	
