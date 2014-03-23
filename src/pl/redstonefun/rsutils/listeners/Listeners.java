@@ -24,12 +24,14 @@ public class Listeners {
 			if(!entry.isDirectory()){
 				if(name.split("\\.")[name.split("\\.").length -1].equals("class")){
 					name = name.replace(".class", "").replace("/", ".");
-					Class<?> forCheck = Class.forName(name);
-					for(Annotation an : forCheck.getAnnotations()){
-						if(an instanceof RSListener){
-							RSUtils.instance.manager.registerEvents((Listener) forCheck.newInstance(), RSUtils.instance);
-							RSUtils.logger.info("Zaladowano Listener: " + forCheck.getSimpleName());
-							break;
+					if(name.startsWith("pl.redstonefun")){
+						Class<?> forCheck = Class.forName(name);
+						for(Annotation an : forCheck.getAnnotations()){
+							if(an instanceof RSListener){
+								RSUtils.instance.manager.registerEvents((Listener) forCheck.newInstance(), RSUtils.instance);
+								RSUtils.logger.info("Zaladowano Listener: " + forCheck.getSimpleName());
+								break;
+							}
 						}
 					}
 				}

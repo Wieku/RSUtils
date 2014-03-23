@@ -38,13 +38,15 @@ public class Commands {
 			if(!entry.isDirectory()){
 				if(name.split("\\.")[name.split("\\.").length -1].equals("class")){
 					name = name.replace(".class", "").replace("/", ".");
-					Class<?> forCheck = Class.forName(name);
-					for(Annotation v : forCheck.getAnnotations()){	
-						if(v instanceof RSCommand){
-							if(Arrays.asList(forCheck.getInterfaces()).contains(Command.class)){
-								list.add(forCheck);
-							} else {
-								RSUtils.logger.severe("Nieprawidlowa skladnia klasy: " + name);						
+					if(name.startsWith("pl.redstonefun")){
+						Class<?> forCheck = Class.forName(name);
+						for(Annotation v : forCheck.getAnnotations()){	
+							if(v instanceof RSCommand){
+								if(Arrays.asList(forCheck.getInterfaces()).contains(Command.class)){
+									list.add(forCheck);
+								} else {
+									RSUtils.logger.severe("Nieprawidlowa skladnia klasy: " + name);						
+								}
 							}
 						}
 					}

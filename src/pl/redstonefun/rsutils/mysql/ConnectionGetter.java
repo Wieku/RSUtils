@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import pl.redstonefun.rsutils.main.Main;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.yaml.YAML;
 
 public class ConnectionGetter {
@@ -18,7 +18,7 @@ public class ConnectionGetter {
 			con = DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			Main.logger.info(e.getMessage());
+			RSUtils.logger.info(e.getMessage());
 		}
 		return con;
 	}
