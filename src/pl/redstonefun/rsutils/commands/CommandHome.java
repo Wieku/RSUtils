@@ -1,14 +1,8 @@
 package pl.redstonefun.rsutils.commands;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Deque;
+import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,7 +11,8 @@ import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
 import pl.redstonefun.rsutils.api.Sender;
 import pl.redstonefun.rsutils.main.RSUtils;
-import pl.redstonefun.rsutils.mysql.ConnectionGetter;
+import pl.redstonefun.rsutils.message.I18n;
+import pl.redstonefun.rsutils.mysql.HomeSQL;
 import pl.redstonefun.rsutils.user.User;
 import pl.redstonefun.rsutils.warp.Warp;
 
@@ -38,57 +33,46 @@ public class CommandHome implements Command {
 	public void exec(CommandSender sender, String command, Arguments args) {
 		User user = RSUtils.getUser((Player)sender);
 		if(user.hasPermission("rsutils.home.tp")){
-			Connection connection = ConnectionGetter.getInstance().get();
 			if(args.length == 0){
-				try {
-					PreparedStatement st = connection.prepareStatement("SELECT * FROM `rs_home` WHERE `player`=?");
-					st.setString(1, user.getName().toLowerCase());
-					ResultSet set = st.executeQuery();
-					String text1 = ChatColor.GREEN + "Lista home'ów: ";
-					String list = "";
-					while(set.next()){
-						list = list + ChatColor.GOLD + ChatColor.BOLD + set.getString("name") + ChatColor.RESET + ChatColor.GRAY + ", ";
-					}
-					set.close();
-					st.close();
-					ConnectionGetter.getInstance().release(connection);
-					user.sendMessage(text1);
-					user.sendMessage(list);
-				} catch(SQLException e){
-					e.printStackTrace();
+				HashMap<String, Warp> homes = HomeSQL.getHomes(user.getName().toLowerCase());
+				
+				String list = "";
+				for(String name : homes.keySet()){
+					list = list + ChatColor.GOLD + ChatColor.BOLD + name + ChatColor.RESET + ChatColor.GRAY + ", ";
 				}
+
+				user.sendMessage("&aLista home'ów");
+				user.sendMessage(list);
+
 			} else {				
-				try {
-					PreparedStatement st;
-					st = connection.prepareStatement("SELECT * FROM `rs_home` WHERE `player`=? AND `name`=?");
-					st.setString(1, user.getName().toLowerCase());
-					st.setString(2, args.get(0).toLowerCase());
-					ResultSet set = st.executeQuery();
+				HashMap<String, Warp> homes;
 					
-					int count = 0;
+				String homeName = "";
 					
-					if(set.last()){
-						count = set.getRow();
-						set.first();
-					}
-					
-					System.out.println(count);
-					if(count == 0){
-						user.sendMessage("&4Home nie istnieje");
+				if(args.get(0).contains(":")){
+					if(user.hasPermission("rsutils.home.tp.someone")){
+						String[] split = args.get(0).split(":");
+						if(split.length > 2){
+							user.sendMessage(I18n.INCORRECTARG.get());
+						}
+						homes = HomeSQL.getHomes(split[0]);
+						homeName = split[1];
+					} else {
 						return;
 					}
-					
-					Warp warp = new Warp(args.get(0).toLowerCase(), new Location(Bukkit.getWorld(set.getString("world")), set.getDouble("x"), set.getDouble("y"), set.getDouble("z"), set.getFloat("yaw"), set.getFloat("pitch")));
-					set.close();
-					st.close();
-					ConnectionGetter.getInstance().release(connection);
-					user.teleport(warp);
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} else {
+					homes = HomeSQL.getHomes(user.getName().toLowerCase());
+					homeName = args.get(0);
 				}
-				
-				
-			}
+				homeName = homeName.toLowerCase();
+
+				if(!homes.containsKey(homeName)){
+					user.sendMessage("&4Home nie istnieje");
+					return;
+				}
+
+				user.teleport(homes.get(homeName));
+			}	
 		}
 	}
 

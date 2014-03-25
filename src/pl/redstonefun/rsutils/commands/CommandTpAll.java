@@ -11,53 +11,54 @@ import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.message.Messages;
 import pl.redstonefun.rsutils.user.User;
 
-@RSCommand(command="tpo", description="Teleportuje do gracza, omijając jego niewidzialność")
-public class CommandTpo implements Command {
+@RSCommand(command="tpall", description="Teleportuje graczy do gracza/ciebie")
+public class CommandTpAll implements Command {
 
 	@Override
 	public int[] getMinMax() {
-		return new int[]{1,2};
+		return new int[]{0,1};
 	}
 
 	@Override
 	public Sender getSenders() {
-		return Sender.PLAYER;
+		return Sender.ALL;
 	}
 
 	@Override
 	public void exec(CommandSender sender, String command, Arguments args) {
-		if(!(sender instanceof Player) && args.length == 1){
+		
+		if(!(sender instanceof Player) && args.length == 0){
 			sender.sendMessage(Messages.notEnoughArguments);
 			return;
 		}
 		
-		if(args.length == 1){
+		if(args.length == 0){
 			User user = RSUtils.getUser((Player)sender);
-			if(user.hasPermission("rsutils.tp.tpo")){
-				User target = RSUtils.getUser(args.get(0));
-				
-				if(target != null){
-					user.teleport(target);
-				} else {
-					sender.sendMessage(Messages.userOffline);
+			if(user.hasPermission("rsutils.tp.tpall")){
+				for(User us : RSUtils.getUsers()){
+					if(!us.isVanished()){
+						us.teleport(user);
+					}
 				}
 			}
 		} else {
 			if(sender instanceof Player){
-				if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.tp.tpo.someone")){
+				if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.tp.tpall.someone")){
 					return;
 				}
 			}
 			
 			User target = RSUtils.getUser(args.get(0));
-			User target2 = RSUtils.getUser(args.get(1));
 			
-			if(target != null && target2 != null){
-				target.teleport(target2);
+			if(target != null){
+				for(User us : RSUtils.getUsers()){
+					if(!us.isVanished()){
+						us.teleport(target);
+					}
+				}
 			} else {
 				sender.sendMessage(Messages.userOffline);
 			}
-			
 		}
 		
 	}

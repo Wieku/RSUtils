@@ -30,7 +30,7 @@ public class CommandUnban implements Command{
 				
 		String name = offlinePlayer.getName().toLowerCase();
 				
-		YAML.set(YAML.type.BANS, name, null);
+		YAML.set(YAML.type.BANS, name + ".ban", null);
 				
 		try {
 			YAML.saveAndReload(YAML.type.BANS);

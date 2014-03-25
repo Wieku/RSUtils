@@ -1,5 +1,6 @@
 package pl.redstonefun.rsutils.user;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,20 +8,20 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
+import pl.redstonefun.rsutils.calendar.CalendarEx;
 import pl.redstonefun.rsutils.message.I18n;
 import pl.redstonefun.rsutils.message.Messages;
 import pl.redstonefun.rsutils.warp.Warp;
@@ -43,8 +44,7 @@ public class User {
 	
 	public User(Player player){
 		this.player = player;
-		if(player != null)
-			user = PermissionsEx.getUser(player);
+		user = PermissionsEx.getUser(player);
 	}
 	
 	/**
@@ -161,6 +161,27 @@ public class User {
 		return afkPlayers.contains(getPlayer());
 	}
 	
+	public boolean isMuted(){
+		YAML.type type= YAML.type.BANS;
+		String mute = getName().toLowerCase() + ".mute";
+		if(YAML.isSet(type, mute)){
+			CalendarEx ex = new CalendarEx();
+			try {
+				ex.setFromString(YAML.getString(type, mute + ".for"));
+			} catch (ParseException e) {
+				return false;
+			}
+			if(ex.isLaterFromNow()){
+				YAML.set(type, mute, null);
+				return false;
+			} else {
+				return true;	
+			}
+		} else {
+			return false;
+		}
+	}
+	
 	public boolean isOnline(){
 		if(player == null || !player.isOnline()){
 			return false;
@@ -245,6 +266,10 @@ public class User {
 			afkPlayers.remove(getPlayer());
 			Bukkit.broadcastMessage(I18n.UNOAFK.getE().write(0, getColoredName()).get());
 		}
+	}
+	
+	public void setGamemode(GameMode mode){
+		getPlayer().setGameMode(mode);
 	}
 	
 	public void setHat(ItemStack itemstack){

@@ -62,9 +62,9 @@ public class CommandTempban implements Command{
 				cx.add(time);
 			}
 					
-			YAML.set(YAML.type.BANS, name + ".for", cx.getInString());
-			YAML.set(YAML.type.BANS, name + ".reason", reason);
-			YAML.set(YAML.type.BANS, name + ".who", sender.getName());
+			YAML.set(YAML.type.BANS, name + ".ban.for", cx.getInString());
+			YAML.set(YAML.type.BANS, name + ".ban.reason", reason);
+			YAML.set(YAML.type.BANS, name + ".ban.who", sender.getName());
 					
 			try {
 				YAML.saveAndReload(YAML.type.BANS);

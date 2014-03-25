@@ -39,7 +39,7 @@ public class CommandTp implements Command {
 				
 				if(target != null){
 					
-					if(!(sender instanceof Player) || !target.isVanished()){
+					if(!target.isVanished()){
 						user.teleport(target);
 					} else {
 						sender.sendMessage(Messages.userOffline);
@@ -50,7 +50,7 @@ public class CommandTp implements Command {
 			}
 		} else {
 			if(sender instanceof Player){
-				if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.tp.someone")){
+				if(!RSUtils.getUser((Player)sender).hasPermission("rsutils.tp.tp.someone")){
 					return;
 				}
 			}
@@ -59,13 +59,11 @@ public class CommandTp implements Command {
 			User target2 = RSUtils.getUser(args.get(1));
 			
 			if(target != null && target2 != null){
-				
-				if(!(sender instanceof Player) || !target.isVanished() && !target.isVanished()){
+				if(!target.isVanished() && !target.isVanished()){
 					target.teleport(target2);
 				} else {
 					sender.sendMessage(Messages.userOffline);
 				}
-				
 			} else {
 				sender.sendMessage(Messages.userOffline);
 			}

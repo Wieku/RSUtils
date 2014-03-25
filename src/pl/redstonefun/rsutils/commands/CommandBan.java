@@ -36,9 +36,9 @@ public class CommandBan implements Command{
 				
 		String name = offlinePlayer.getName().toLowerCase();
 				
-		YAML.set(YAML.type.BANS, name + ".for", "forever");
-		YAML.set(YAML.type.BANS, name + ".reason", reason);
-		YAML.set(YAML.type.BANS, name + ".who", sender.getName());
+		YAML.set(YAML.type.BANS, name + ".ban.for", "forever");
+		YAML.set(YAML.type.BANS, name + ".ban.reason", reason);
+		YAML.set(YAML.type.BANS, name + ".ban.who", sender.getName());
 			
 		try {
 			YAML.saveAndReload(YAML.type.BANS);

@@ -35,4 +35,33 @@ public class Warp {
 	public String getName(){
 		return name;
 	}
+	
+	public double getX(){
+		return location.getX();
+	}
+	
+	public double getY(){
+		return location.getY();
+	}
+	
+	public double getZ(){
+		return location.getZ();
+	}
+	
+	public float getPitch(){
+		return location.getPitch();
+	}
+	
+	public float getYaw(){
+		return location.getYaw();
+	}
+	
+	public World getWorld(){
+		return location.getWorld();
+	}
+	
+	public String getWorldName(){
+		return getWorld().getName();
+	}
+	
 }

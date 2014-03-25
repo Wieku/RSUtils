@@ -3,7 +3,6 @@ package pl.redstonefun.rsutils.main;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -34,12 +33,8 @@ import pl.redstonefun.rsutils.user.TabList;
 import pl.redstonefun.rsutils.user.User;
 import pl.redstonefun.rsutils.yaml.YAML;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 
 
 public class RSUtils extends JavaPlugin implements Listener{

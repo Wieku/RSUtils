@@ -7,6 +7,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import pl.redstonefun.rsutils.api.RSListener;
 import pl.redstonefun.rsutils.user.User;
+import pl.redstonefun.rsutils.yaml.YAML;
 
 @RSListener
 public class PlayerChatListener implements Listener {
@@ -15,6 +16,14 @@ public class PlayerChatListener implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent e){
 		
 		User user = new User(e.getPlayer());
+		
+		if(user.isMuted()){
+			YAML.type type = YAML.type.BANS;
+			String mute = user.getName().toLowerCase() + ".mute";
+			user.sendMessage("&7Jesteś wyciszony do " + YAML.getString(type, mute + ".for") + " za: " + YAML.getString(type, mute + ".reason"));
+			e.setCancelled(true);
+			return;
+		}
 		
 		String format = user.getChatFormat();
 		
