@@ -1,6 +1,0 @@
-name: RSUtils
-main: pl.redstonefun.rsutils.main.RSUtils
-authors: [WiekZagrozenia, magik6000,]
-depend: [ProtocolLib,]
-loadbefore: [ProtocolLib,]
-version: 0.1
