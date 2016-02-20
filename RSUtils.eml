@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="1.8" jdk_type="JavaSDK">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="mysqlConnector" scope="COMPILE">
+		<relative-module-cls project-related="file://$PROJECT_DIR$/libs_binary/mysqlConnector"/>
+	</lib>
+	<levels>
+		<level name="worldguard-6.1" value="project"/>
+		<level name="worldedit-bukkit-6.1" value="project"/>
+		<level name="ProtocolLib-3.4.5" value="project"/>
+		<level name="PermissionsEx-1.23.4" value="project"/>
+	</levels>
+</component>

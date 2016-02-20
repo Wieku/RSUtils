@@ -11,4 +11,5 @@ public @interface RSCommand {
 	String command();
 	String description() default "";
 	String[] aliases() default {};
+	String[] permissions() default {};
 }

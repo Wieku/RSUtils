@@ -17,7 +17,7 @@ public class PlayerJumpPadListener implements Listener {
 	public void onPlayerInterract(PlayerInteractEvent e){
 		if(e.getAction() == Action.PHYSICAL){
 			if(e.getClickedBlock().getType() == Material.GOLD_PLATE){			
-				if(e.getClickedBlock().getRelative(BlockFace.DOWN).getType() == Material.MONSTER_EGGS){
+				if(e.getClickedBlock().getRelative(BlockFace.DOWN).getType() == Material.MOB_SPAWNER){
 					new User(e.getPlayer()).jump(0.50D, 2);
 					e.setCancelled(true);
 				}

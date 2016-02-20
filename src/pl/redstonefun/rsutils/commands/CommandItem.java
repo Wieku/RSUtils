@@ -10,32 +10,29 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import pl.redstonefun.rsutils.api.Arguments;
 import pl.redstonefun.rsutils.api.Command;
 import pl.redstonefun.rsutils.api.RSCommand;
+import pl.redstonefun.rsutils.api.Sender;
 import pl.redstonefun.rsutils.user.User;
 
 @RSCommand(command="item",description="Tworzy ci item.", aliases={"i"})
 public class CommandItem implements Command {
 
 	@Override
-	public int getMin() {
-		return 1;
+	public int[] getMinMax() {
+		return new int[]{1, 3};
 	}
 
 	@Override
-	public int getMax() {
-		return 3;
-	}
-
-	@Override
-	public Object[] getSenders() {
-		return new Object[]{Player.class};
+	public Sender getSenders() {
+		return Sender.PLAYER;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void exec(CommandSender sender, String command, String[] args) {
-		User user = new User((Player)sender);
+	public void exec(CommandSender sender, String command, Arguments args) {
+		/*User user = new User((Player)sender);
 		if(user.hasPermission("rsutils.item")){
 			
 			Material material;
@@ -97,7 +94,7 @@ public class CommandItem implements Command {
 			//ConfigurationSerialization.
 			//item.setItemMeta((ItemMeta)ConfigurationSerialization.deserializeObject(new Object()));
 			//System.out.println(item.toString());
-		}
+		}*/
 	}	
 	
 	public Map<String, Object> serialize(String str){

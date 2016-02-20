@@ -1,10 +1,15 @@
 package pl.redstonefun.rsutils.user;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.comphenix.protocol.PacketType.Play.Server;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers.TitleAction;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -22,6 +27,7 @@ import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import pl.redstonefun.rsutils.calendar.CalendarEx;
+import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.message.I18n;
 import pl.redstonefun.rsutils.message.Messages;
 import pl.redstonefun.rsutils.warp.Warp;
@@ -107,7 +113,11 @@ public class User {
 	public String getGroup(){
 		return (user.getGroups()[0]).getName();
 	}
-	
+
+	public String getGroupColored(){
+		return ChatColor.translateAlternateColorCodes('&', user.getPrefix() + getGroup());
+	}
+
 	public ItemStack getHat(){
 		return player.getInventory().getHelmet();
 	}
@@ -162,7 +172,7 @@ public class User {
 	}
 	
 	public boolean isMuted(){
-		YAML.type type= YAML.type.BANS;
+		YAML.type type = YAML.type.BANS;
 		String mute = getName().toLowerCase() + ".mute";
 		if(YAML.isSet(type, mute)){
 			CalendarEx ex = new CalendarEx();
@@ -182,8 +192,8 @@ public class User {
 		}
 	}
 	
-	public boolean isOnline(){
-		if(player == null || !player.isOnline()){
+	public boolean isOnline() {
+		if(player == null || !player.isOnline()) {
 			return false;
 		} else {
 			return true;
@@ -301,7 +311,46 @@ public class User {
 		}
 		
 	}
-	
+
+	public void sendHeaderAndFooter(String header, String footer) {
+		PacketContainer container = RSUtils.pManager.createPacket(Server.PLAYER_LIST_HEADER_FOOTER);
+
+		container.getChatComponents().write(0, WrappedChatComponent.fromText(header))
+				.write(1, WrappedChatComponent.fromText(footer));
+
+		sendPacket(container);
+	}
+
+	public void sendTitle(String title, String subtitle, float time, float fadeIn, float fadeOut) {
+
+		PacketContainer times = RSUtils.pManager.createPacket(Server.TITLE);
+		times.getTitleActions().write(0, TitleAction.TIMES);
+		times.getIntegers().write(0, (int)(fadeIn*20)).write(1, (int)(time*20)).write(2, (int)(fadeOut*20));
+		sendPacket(times);
+
+		if(title != null) {
+			PacketContainer titles = RSUtils.pManager.createPacket(Server.TITLE);
+			titles.getTitleActions().write(0, TitleAction.TITLE);
+			titles.getChatComponents().write(0, WrappedChatComponent.fromText(title));
+			sendPacket(titles);
+		}
+
+		if(subtitle != null) {
+			PacketContainer subtitles = RSUtils.pManager.createPacket(Server.TITLE);
+			subtitles.getTitleActions().write(0, TitleAction.SUBTITLE);
+			subtitles.getChatComponents().write(0, WrappedChatComponent.fromText(subtitle));
+			sendPacket(subtitles);
+		}
+	}
+
+	public void sendPacket(PacketContainer packet) {
+		try {
+			RSUtils.pManager.sendServerPacket(player, packet);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void setWalkSpeed(float speed){
 		player.setWalkSpeed(speed);
 	}
@@ -326,6 +375,7 @@ public class User {
 	public void teleport(Warp warp){
 		sendMessage(Messages.teleport.replace("%loc", warp.getName()) + registerLast(true));
 		teleport(warp.toLocation());
+		sendTitle("", "Jesteś w: "+warp.getName(), 4, 1, 1);
 	}
 	
 	public void teleport(Location loc){

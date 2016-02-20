@@ -40,14 +40,14 @@ public class CommandSpeed implements Command {
 					return;
 				}
 				user.setFlySpeed(flo/10);
-				user.sendMessage("&aUstawiono prędkość chodzenia na: " + flo);
+				user.sendMessage("&aUstawiono prędkość latania na: " + flo);
 			} else {	
 				if(flo > 5.0F || flo < 0.0F){
 					user.sendMessage("&4Liczba musi być między 0.0 a 5.0!");
 					return;
 				}
 				user.setWalkSpeed(flo/5);
-				user.sendMessage("&aUstawiono prędkość latania na: " + flo);
+				user.sendMessage("&aUstawiono prędkość chodzenia na: " + flo);
 			}
 			
 		}

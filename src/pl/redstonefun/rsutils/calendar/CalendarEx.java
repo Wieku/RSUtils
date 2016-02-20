@@ -38,7 +38,11 @@ public class CalendarEx{
 	public String getInString(){
 		return format.format(c.getTime());
 	}
-	
+
+	public Date getAsDate() {
+		return c.getTime();
+	}
+
 	public void add(String time) throws ParseException { 
 		String last = time.substring(time.length()-1);
 		int tim = Integer.parseInt(time.substring(0, time.length()-1));

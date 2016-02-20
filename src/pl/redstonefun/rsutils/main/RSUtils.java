@@ -81,7 +81,7 @@ public class RSUtils extends JavaPlugin implements Listener{
 		
 		ConnectionGetter.start();
 		
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TabList(), 0, 40);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TabList(), 0, 20);
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Ticks(), 0, 1);
 		
@@ -109,13 +109,10 @@ public class RSUtils extends JavaPlugin implements Listener{
 	public void onPlayerJoin(PlayerJoinEvent e){
 		users.put(e.getPlayer(), new User(e.getPlayer()));
 		users.get(e.getPlayer()).login();
-		System.out.println("fgffff");
-		System.out.println(users);
 	}
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e){
-		System.out.println("gvgggggc " + users);
 		users.get(e.getPlayer()).left();
 		users.remove(e.getPlayer());
 	}
@@ -134,65 +131,11 @@ public class RSUtils extends JavaPlugin implements Listener{
 		return use.toArray(new User[0]);	
 	}
 	
-	public static User[] sortByRank(User[] array){
-		
-		Arrays.sort(array, new Comparator<User>() {
-			
-			@Override
-			public int compare(User o1, User o2) {
-				Integer rank = o1.getRank();
-				Integer rank1 = o2.getRank();
-				return rank.compareTo(rank1);
-			}
-
-			@Override
-			public Comparator<User> reversed() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Comparator<User> thenComparing(Comparator<? super User> other) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public <U> Comparator<User> thenComparing(
-					Function<? super User, ? extends U> keyExtractor,
-					Comparator<? super U> keyComparator) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public <U extends Comparable<? super U>> Comparator<User> thenComparing(
-					Function<? super User, ? extends U> keyExtractor) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Comparator<User> thenComparingInt(
-					ToIntFunction<? super User> keyExtractor) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Comparator<User> thenComparingLong(
-					ToLongFunction<? super User> keyExtractor) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Comparator<User> thenComparingDouble(
-					ToDoubleFunction<? super User> keyExtractor) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
+	public static User[] sortByRank(User[] array) {
+		Arrays.sort(array, (User o1, User o2)->{
+			Integer rank = o1.getRank();
+			Integer rank1 = o2.getRank();
+			return rank.compareTo(rank1);
 		});
 		
 		return array;

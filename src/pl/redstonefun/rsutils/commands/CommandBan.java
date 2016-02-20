@@ -1,5 +1,6 @@
 package pl.redstonefun.rsutils.commands;
 
+import org.bukkit.BanList.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -33,24 +34,11 @@ public class CommandBan implements Command{
 		if(args.length > 1){
 			reason = args.getFT(1, args.length-1, " ");
 		}
-				
-		String name = offlinePlayer.getName().toLowerCase();
-				
-		YAML.set(YAML.type.BANS, name + ".ban.for", "forever");
-		YAML.set(YAML.type.BANS, name + ".ban.reason", reason);
-		YAML.set(YAML.type.BANS, name + ".ban.who", sender.getName());
-			
-		try {
-			YAML.saveAndReload(YAML.type.BANS);
-		} catch (Exception e) {
-			sender.sendMessage(Messages.saveFileError);
-			e.printStackTrace();
-		}
-				
-		offlinePlayer.setBanned(true);
+
+		Bukkit.getBanList(Type.NAME).addBan(offlinePlayer.getName(), reason, null, sender.getName());
+
 		if(offlinePlayer.isOnline()) offlinePlayer.getPlayer().kickPlayer(I18n.UBANNED.getE().write(0, reason).get());
 		Bukkit.broadcastMessage(I18n.USBANNED.getE().write(0, offlinePlayer.getName()).write(1, reason).get());
-				
 	}
 
 	@Override

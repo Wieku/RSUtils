@@ -1,10 +1,15 @@
 package pl.redstonefun.rsutils.listeners;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
-import net.minecraft.server.v1_7_R1.PlayerConnection;
-
+import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import org.apache.commons.lang.exception.NestableRuntimeException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,8 +32,7 @@ import pl.redstonefun.rsutils.main.RSUtils;
 import pl.redstonefun.rsutils.user.User;
 
 public class PlayerSignEditingListener extends PacketAdapter implements Listener {
-	
-	public static PlayerConnection conn;
+
 	public static HashMap<Player, Sign> signsInEditing = new HashMap<Player, Sign>();
 	
 	
@@ -44,12 +48,29 @@ public class PlayerSignEditingListener extends PacketAdapter implements Listener
 		final Player player = event.getPlayer();
 		if(signsInEditing.containsKey(player)){
 			final Sign sign = signsInEditing.get(player);
-			final String[] lines = event.getPacket().getStringArrays().getValues().get(0);
+			final WrappedChatComponent[] lines1 = event.getPacket().getChatComponentArrays().getValues().get(0);
+			final String[] lines = new String[4];
+
+
+			for(int i=0; i < lines1.length;i++){
+				String text="";
+
+				try {
+					StringWriter writer = new StringWriter();
+					unescapeJava(writer, lines1[i].getJson().substring(1, lines1[i].getJson().length()-1));
+					writer.flush();
+					text = writer.toString();
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				lines[i] = text;
+			}
+
 			event.setCancelled(true);
 			
-			Bukkit.getScheduler().runTaskAsynchronously(RSUtils.instance, new Runnable() {				
-				@Override
-				public void run() {
+			Bukkit.getScheduler().runTaskAsynchronously(RSUtils.instance, () -> {
 					SignChangeEvent ev = new SignChangeEvent(sign.getBlock(), player, lines.clone());
 					Bukkit.getServer().getPluginManager().callEvent(ev);
 					 if (!ev.isCancelled()) {
@@ -62,8 +83,7 @@ public class PlayerSignEditingListener extends PacketAdapter implements Listener
 	                    } else {
 	                        player.sendMessage(ChatColor.DARK_RED + "Anulowano edycję tabliczki!");
 	                    }
-				}
-			});
+				});
 			signsInEditing.remove(player);
 			
 		}
@@ -84,17 +104,17 @@ public class PlayerSignEditingListener extends PacketAdapter implements Listener
 							return;
 						}
 						
-						String[] lines = sign.getLines();
-						for(int i=0;i<lines.length;i++){
-							lines[i] = lines[i].replace('§', '&');
-						}
+						WrappedChatComponent[] lines = new WrappedChatComponent[4];
+						for(int i=0;i<lines.length;i++)
+							lines[i] = WrappedChatComponent.fromText(sign.getLine(i).replace('§', '&'));
 						
 						PacketContainer packetSign = RSUtils.pManager.createPacket(PacketType.findLegacy(133));
 						PacketContainer packetEdit = RSUtils.pManager.createPacket(PacketType.findLegacy(130));
-						packetSign.getIntegers().write(0, sign.getX()).write(1, sign.getY()).write(2, sign.getZ());
-						
-			            packetEdit.getIntegers().write(0, sign.getX()).write(1, sign.getY()).write(2, sign.getZ());
-			            packetEdit.getStringArrays().write(0, lines);
+
+						packetSign.getBlockPositionModifier().write(0, new BlockPosition(sign.getLocation().toVector()));
+
+			            packetEdit.getBlockPositionModifier().write(0, new BlockPosition(sign.getLocation().toVector()));
+			            packetEdit.getChatComponentArrays().write(0, lines);
 			           
 						try {
 							RSUtils.pManager.sendServerPacket(e.getPlayer(), packetEdit);
@@ -110,4 +130,105 @@ public class PlayerSignEditingListener extends PacketAdapter implements Listener
 			}
 		}
 	}
+
+
+	/** SOURCE: Apache Commons Lang -> StringEscapeUtils
+	 * <p>Unescapes any Java literals found in the <code>String</code> to a
+	 * <code>Writer</code>.</p>
+	 *
+	 * <p>For example, it will turn a sequence of <code>'\'</code> and
+	 * <code>'n'</code> into a newline character, unless the <code>'\'</code>
+	 * is preceded by another <code>'\'</code>.</p>
+	 *
+	 * <p>A <code>null</code> string input has no effect.</p>
+	 *
+	 * @param out  the <code>Writer</code> used to output unescaped characters
+	 * @param str  the <code>String</code> to unescape, may be null
+	 * @throws IllegalArgumentException if the Writer is <code>null</code>
+	 * @throws IOException if error occurs on underlying Writer
+	 */
+	public static void unescapeJava(StringWriter out, String str) throws IOException {
+		if (out == null) {
+			throw new IllegalArgumentException("The Writer must not be null");
+		}
+		if (str == null) {
+			return;
+		}
+		int sz = str.length();
+		StringBuffer unicode = new StringBuffer(4);
+		boolean hadSlash = false;
+		boolean inUnicode = false;
+		for (int i = 0; i < sz; i++) {
+			char ch = str.charAt(i);
+			if (inUnicode) {
+				// if in unicode, then we're reading unicode
+				// values in somehow
+				unicode.append(ch);
+				if (unicode.length() == 4) {
+					// unicode now contains the four hex digits
+					// which represents our unicode character
+					try {
+						int value = Integer.parseInt(unicode.toString(), 16);
+						out.write((char) value);
+						unicode.setLength(0);
+						inUnicode = false;
+						hadSlash = false;
+					} catch (NumberFormatException nfe) {
+						throw new NestableRuntimeException("Unable to parse unicode value: " + unicode, nfe);
+					}
+				}
+				continue;
+			}
+			if (hadSlash) {
+				// handle an escaped value
+				hadSlash = false;
+				switch (ch) {
+					case '\\':
+						out.write('\\');
+						break;
+					case '\'':
+						out.write('\'');
+						break;
+					case '\"':
+						out.write('"');
+						break;
+					case 'r':
+						out.write('\r');
+						break;
+					case 'f':
+						out.write('\f');
+						break;
+					case 't':
+						out.write('\t');
+						break;
+					case 'n':
+						out.write('\n');
+						break;
+					case 'b':
+						out.write('\b');
+						break;
+					case 'u':
+					{
+						// uh-oh, we're in unicode country....
+						inUnicode = true;
+						break;
+					}
+					default :
+						out.write(ch);
+						break;
+				}
+				continue;
+			} else if (ch == '\\') {
+				hadSlash = true;
+				continue;
+			}
+			out.write(ch);
+		}
+		if (hadSlash) {
+			// then we're in the weird case of a \ at the end of the
+			// string, let's output it anyway.
+			out.write('\\');
+		}
+	}
+
 }

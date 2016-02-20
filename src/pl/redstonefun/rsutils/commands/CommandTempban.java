@@ -2,6 +2,8 @@ package pl.redstonefun.rsutils.commands;
 
 import java.text.ParseException;
 
+import org.bukkit.BanList;
+import org.bukkit.BanList.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -62,17 +64,19 @@ public class CommandTempban implements Command{
 				cx.add(time);
 			}
 					
-			YAML.set(YAML.type.BANS, name + ".ban.for", cx.getInString());
-			YAML.set(YAML.type.BANS, name + ".ban.reason", reason);
-			YAML.set(YAML.type.BANS, name + ".ban.who", sender.getName());
+			//YAML.set(YAML.type.BANS, name + ".ban.for", cx.getInString());
+			//YAML.set(YAML.type.BANS, name + ".ban.reason", reason);
+			//YAML.set(YAML.type.BANS, name + ".ban.who", sender.getName());
 					
-			try {
-				YAML.saveAndReload(YAML.type.BANS);
-			} catch (Exception e) {
-				sender.sendMessage(Messages.saveFileError);
-				e.printStackTrace();
-			}				
-			offlinePlayer.setBanned(true);
+			//try {
+			//	YAML.saveAndReload(YAML.type.BANS);
+			//} catch (Exception e) {
+			//	sender.sendMessage(Messages.saveFileError);
+			//	e.printStackTrace();
+			//}
+			Bukkit.getBanList(Type.NAME).addBan(name, reason, cx.getAsDate(), sender.getName());
+
+			//offlinePlayer.setBanned(true);
 			
 			if(offlinePlayer.isOnline()){
 				offlinePlayer.getPlayer().kickPlayer(Messages.youAreTempBanned.replace("%time", cx.getInString()).replace("%reason", reason));

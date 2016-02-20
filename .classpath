@@ -2,11 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="libs/PermissionsEx.jar"/>
-	<classpathentry kind="lib" path="libs/redstone.jar"/>
-	<classpathentry kind="lib" path="libs/WorldEditPlots.jar"/>
-	<classpathentry kind="lib" path="libs/WorldGuard.jar"/>
-	<classpathentry kind="lib" path="libs/ProtocolLib-3.2.0.jar"/>
 	<classpathentry kind="lib" path="libs_binary/mysqlConnector"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/worldguard-6.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/worldedit-bukkit-6.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ProtocolLib-3.4.5"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/PermissionsEx-1.23.4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

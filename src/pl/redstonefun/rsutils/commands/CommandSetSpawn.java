@@ -31,6 +31,7 @@ public class CommandSetSpawn implements Command {
 		if(user.hasPermission("rsutils.setspawn")){
 			Location l = user.getLocation();
 			l.getWorld().setSpawnLocation(l.getBlockX(), l.getBlockY(), l.getBlockZ());
+
 			YAML.set(YAML.type.CONFIG, "spawn", l.getWorld().getName());
 			try {
 				YAML.saveAndReload(YAML.type.CONFIG);
